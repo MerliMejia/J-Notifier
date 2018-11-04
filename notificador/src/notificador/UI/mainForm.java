@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -74,7 +75,9 @@ public class mainForm extends javax.swing.JFrame {
         
         
     }
-    
+    /**
+     * ESTE METODO 0
+     */
     void traerDatosTabla()
     {
         String rutaJSON = System.getProperty("user.dir") + "\\DBB.json";//RUTA DEL .JSON
@@ -91,7 +94,8 @@ public class mainForm extends javax.swing.JFrame {
                 JsonObject item = (JsonObject) array.get(i);
                 Object[] fila = new Object[]{item.get("RESTAURANTES").toString().replace("\"", ""), 
                     item.get("HABITACION").toString().replace("\"", ""), item.get("OBSERVACIONES").toString().replace("\"", ""), 
-                    item.get("HORA").toString().replace("\"", ""), item.get("FECHA").toString().replace("\"", "")};
+                    item.get("HORA").toString().replace("\"", ""), item.get("FECHA").toString().replace("\"", ""), 
+                    item.get("C.ADULTOS").toString().replace("\"", ""), item.get("C.NIÑOS").toString().replace("\"", "")};
                 
                 modelo.addRow(fila);
             }
@@ -120,6 +124,10 @@ public class mainForm extends javax.swing.JFrame {
         observaciones = new javax.swing.JTextField();
         jSeparator1 = new javax.swing.JSeparator();
         preHabitacion = new javax.swing.JCheckBox();
+        jLabel5 = new javax.swing.JLabel();
+        cAdultos = new javax.swing.JSpinner();
+        jLabel6 = new javax.swing.JLabel();
+        cNinos = new javax.swing.JSpinner();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabla = new javax.swing.JTable();
@@ -178,6 +186,12 @@ public class mainForm extends javax.swing.JFrame {
             }
         });
 
+        jLabel5.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jLabel5.setText("CANT. ADULTOS");
+
+        jLabel6.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jLabel6.setText("CANT. NIÑOS");
+
         javax.swing.GroupLayout panelAgregarLayout = new javax.swing.GroupLayout(panelAgregar);
         panelAgregar.setLayout(panelAgregarLayout);
         panelAgregarLayout.setHorizontalGroup(
@@ -186,28 +200,37 @@ public class mainForm extends javax.swing.JFrame {
                 .addGap(31, 31, 31)
                 .addGroup(panelAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(panelAgregarLayout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(horaFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(limpiar)
+                        .addGap(18, 18, 18)
+                        .addComponent(agregar)
+                        .addGap(50, 50, 50))
                     .addGroup(panelAgregarLayout.createSequentialGroup()
                         .addGroup(panelAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel3)
                             .addComponent(jLabel4)
                             .addComponent(jLabel2)
                             .addComponent(jLabel1))
                         .addGap(12, 12, 12)
-                        .addGroup(panelAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(restaurantes, 0, 487, Short.MAX_VALUE)
-                            .addComponent(observaciones)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelAgregarLayout.createSequentialGroup()
-                                .addComponent(locata)
-                                .addGap(18, 18, 18)
-                                .addComponent(preHabitacion)))
-                        .addGap(17, 17, 17))
-                    .addGroup(panelAgregarLayout.createSequentialGroup()
-                        .addComponent(limpiar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(agregar)))
-                .addContainerGap(33, Short.MAX_VALUE))
+                        .addGroup(panelAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(panelAgregarLayout.createSequentialGroup()
+                                .addComponent(observaciones, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(82, 82, 82)
+                                .addComponent(preHabitacion))
+                            .addGroup(panelAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(panelAgregarLayout.createSequentialGroup()
+                                    .addComponent(locata, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(jLabel5)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(cAdultos, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(jLabel6)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(cNinos, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(horaFecha, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(restaurantes, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addContainerGap(46, Short.MAX_VALUE))))
             .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
         );
         panelAgregarLayout.setVerticalGroup(
@@ -221,11 +244,16 @@ public class mainForm extends javax.swing.JFrame {
                 .addGroup(panelAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(locata, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
-                    .addComponent(preHabitacion))
+                    .addComponent(jLabel5)
+                    .addComponent(cAdultos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(panelAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel6)
+                        .addComponent(cNinos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addGroup(panelAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(observaciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
+                    .addComponent(jLabel4)
+                    .addComponent(preHabitacion))
                 .addGap(18, 18, 18)
                 .addGroup(panelAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
@@ -236,7 +264,7 @@ public class mainForm extends javax.swing.JFrame {
                 .addGroup(panelAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(agregar)
                     .addComponent(limpiar))
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         tabulador.addTab("AGREGAR", panelAgregar);
@@ -246,14 +274,14 @@ public class mainForm extends javax.swing.JFrame {
 
             },
             new String [] {
-                "RESTAURANTES", "HABITACION", "OBSERVACIONES", "HORA", "FECHA"
+                "RESTAURANTES", "HABITACION", "OBSERVACIONES", "HORA", "FECHA", "C.ADULTOS", "C.NIÑOS"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -281,12 +309,17 @@ public class mainForm extends javax.swing.JFrame {
 
         borrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/notificador/resources/close.png"))); // NOI18N
         borrar.setText("BORRAR");
+        borrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                borrarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 700, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 717, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(borrar)
@@ -297,7 +330,7 @@ public class mainForm extends javax.swing.JFrame {
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(editar)
@@ -321,96 +354,6 @@ public class mainForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    //ESTE METODO SE ENCARGA DE LIMPIAR LOS CAMPOS
-    private void limpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_limpiarActionPerformed
-        restaurantes.setSelectedIndex(0);
-        locata.setText("");
-        observaciones.setText("");
-        horaFecha.datePicker.setText("");
-        horaFecha.timePicker.setText("");
-    }//GEN-LAST:event_limpiarActionPerformed
-
-    /***
-     * 
-     * ESTE METODO SE ENCARGA DE CREAR LAS NOTIFICACIONES Y GUARDARLAS EN LA BASE DE DATOS.
-     * TENER EN CUENTA QUE LA BASE DE DATOS NO ES MAS QUE UN .JSON, EL CUAL LEO, AGREGO LOS NUEVOS REGISTROS Y VUELVO A SOBREESCRIBIR
-     */
-    private void agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregarActionPerformed
-
-        //CONDICION PARA QUE NO SE GUARDEN DATOS EN BLANCO
-        if(restaurantes.getSelectedIndex() != 0 && locata.getText().length() != 0 && 
-                observaciones.getText().length() != 0 && horaFecha.datePicker.getText().length() != 0 &&
-                horaFecha.timePicker.getText().length() != 0)
-        {
-            int opcion = JOptionPane.showConfirmDialog(rootPane, "AGREGAR ESTE RECORDATORIO?", 
-                "CONFIRMACION", JOptionPane.YES_NO_OPTION);
-            if(opcion == 0)
-            {
-               
-                String rutaJSON = System.getProperty("user.dir") + "\\DBB.json";//RUTA DEL .JSON
-                
-                JsonParser parse = new JsonParser();
-                
-                try {
-                    Object obj = parse.parse(new FileReader(rutaJSON));//LEO EL JSON
-                    JsonObject json = (JsonObject) obj;//JSON OBJECT
-                    JsonArray array = (JsonArray) json.get("datos");//ARRAY DE DATOS
-                    int tDatos = json.get("total-datos").getAsInt();//TOTAL DE DATOS INGRESADOS
-                    
-                   JsonObject cuerpoNuevoDato = new JsonObject();
-                   String key = randomString(10);//LA KEY DE CADA REGISTRO ES ALEATORIA
-                   
-                   /*CREO EL CUERPO DEL OBJETO QUE AGREGARE AL ARRAY*/
-                   cuerpoNuevoDato.addProperty("RESTAURANTES", restaurantes.getSelectedItem().toString());
-                   cuerpoNuevoDato.addProperty("HABITACION", locata.getText());
-                   cuerpoNuevoDato.addProperty("OBSERVACIONES", observaciones.getText());
-                   cuerpoNuevoDato.addProperty("FECHA", horaFecha.datePicker.getText());
-                   cuerpoNuevoDato.addProperty("HORA", horaFecha.timePicker.getText());
-                   /******************************************************************************************/
-                   
-                   cuerpoNuevoDato.addProperty("KEY", key);
-                   array.add(cuerpoNuevoDato);
-                   
-                   json.add("datos", array);
-                   json.addProperty("total-datos", tDatos+ 1);
-                   json.addProperty("ultimo-dato", key);
-                    
-                   //SOBRE ESCRIBO EL NUEVO .JSON
-                    try {
-                        FileWriter file = new FileWriter(rutaJSON);
-                        file.write(json.toString());
-                        file.flush();
-                        
-                        restaurantes.setSelectedIndex(0);
-                        locata.setText("");
-                        observaciones.setText("");
-                        horaFecha.datePicker.setText("");
-                        horaFecha.timePicker.setText("");
-                        
-                        preHabitacion.setSelected(false);
-                    } catch (IOException ex) {
-                        Logger.getLogger(mainForm.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    
-                    //System.out.println(json);
-                } catch (FileNotFoundException ex) {
-                    Logger.getLogger(mainForm.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                
-                
-            }else
-            {
-                System.out.println("NO!");
-            }
-        }else
-        {
-            JOptionPane.showMessageDialog(null, "FAVOR LLENAR TODOS LOS CAMPOS", "ERROR!", JOptionPane.ERROR_MESSAGE);
-           
-        }
-        
-        
-    }//GEN-LAST:event_agregarActionPerformed
-
     private ArrayList<String> filaSeleccionada = new ArrayList<>();
     private int nFila = -1;
     private void tablaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaMouseClicked
@@ -428,7 +371,7 @@ public class mainForm extends javax.swing.JFrame {
             //System.out.println(tabla.getValueAt(tabla.getSelectedRow(), i));
             filaSeleccionada.add((String) tabla.getValueAt(tabla.getSelectedRow(), i));
         }
-        System.out.println(filaSeleccionada);
+        //System.out.println(filaSeleccionada);
     }//GEN-LAST:event_tablaMouseClicked
 
     private boolean editandoFila = false;
@@ -443,7 +386,7 @@ public class mainForm extends javax.swing.JFrame {
             }else
             {
                 String rutaIcono = "notificador/resources/check.png";
-                System.out.println(rutaIcono + "\n" + fila);
+                //System.out.println(rutaIcono + "\n" + fila);
                 editar.setText("ACEPTAR");
                 Icon icono = new ImageIcon(getClass().getClassLoader().getResource(rutaIcono));
                 editar.setIcon(icono);
@@ -453,6 +396,7 @@ public class mainForm extends javax.swing.JFrame {
                 
                 JTextField texto = new JTextField();
                 DateTimePicker fechaHora = new DateTimePicker();
+                JSpinner spinner = new JSpinner();
                 
                 texto.setText((String) tabla.getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn()));
                 
@@ -467,7 +411,7 @@ public class mainForm extends javax.swing.JFrame {
                         
                         tabla.setValueAt(fechaHora.timePicker.getText(), tabla.getSelectedRow(), tabla.getSelectedColumn());
                         tabla.setValueAt(fechaHora.datePicker.getText(), tabla.getSelectedRow(), tabla.getSelectedColumn() + 1);
-                    }else
+                    }else if(tabla.getSelectedColumn() == 4)
                     {
                         fechaHora.timePicker.setText((String) tabla.getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn() - 1));
                         fechaHora.datePicker.setText((String) tabla.getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn()));
@@ -476,6 +420,12 @@ public class mainForm extends javax.swing.JFrame {
                         
                         tabla.setValueAt(fechaHora.timePicker.getText(), tabla.getSelectedRow(), tabla.getSelectedColumn() - 1);
                         tabla.setValueAt(fechaHora.datePicker.getText(), tabla.getSelectedRow(), tabla.getSelectedColumn());
+                    }else
+                    {   
+                        spinner.setValue(Integer.parseInt((String) tabla.getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn())));
+                        JOptionPane.showMessageDialog(rootPane, spinner, "ESCRIBIR VALOR", JOptionPane.INFORMATION_MESSAGE);
+                        
+                        tabla.setValueAt(spinner.getValue().toString(), tabla.getSelectedRow(), tabla.getSelectedColumn());
                     }
                     
                     
@@ -515,7 +465,7 @@ public class mainForm extends javax.swing.JFrame {
                     objeto.addProperty(tabla.getColumnName(tabla.getSelectedColumn() + i), 
                             tabla.getValueAt(tabla.getSelectedRow(), i).toString());
                     
-                    System.out.println(tabla.getColumnName(tabla.getSelectedColumn()) + "  " + tabla.getValueAt(tabla.getSelectedRow(), i).toString());
+                    //System.out.println(tabla.getColumnName(tabla.getSelectedColumn()) + "  " + tabla.getValueAt(tabla.getSelectedRow(), i).toString());
                 }
                 //System.out.println(objeto);
                 String rutaJSON = System.getProperty("user.dir") + "\\DBB.json";//RUTA DEL .JSON
@@ -564,6 +514,49 @@ public class mainForm extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_editarActionPerformed
 
+    private void borrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_borrarActionPerformed
+        int fila = tabla.getSelectedRow();
+         if(fila == -1)
+            {
+                JOptionPane.showMessageDialog(rootPane, "POR FAVOR SELECCIONE UNA FILA", "ERROR!", JOptionPane.ERROR_MESSAGE);
+            }else
+            {
+                int opcion = JOptionPane.showConfirmDialog(rootPane, "BORRAR ESTE RECORDATORIO?", 
+                "CONFIRMACION", JOptionPane.YES_NO_OPTION);
+                
+                if(opcion == 0)
+                {
+                    String rutaJSON = System.getProperty("user.dir") + "\\DBB.json";//RUTA DEL .JSON
+                
+                    JsonParser parse = new JsonParser();
+
+                    try {
+                        Object obj = parse.parse(new FileReader(rutaJSON));//LEO EL JSON
+                        JsonObject json = (JsonObject) obj;//JSON OBJECT
+
+                        JsonArray array = (JsonArray) json.get("datos");//ARRAY DE DATOS
+                        array.remove(tabla.getSelectedRow());
+                        
+                        json.add("datos", array);
+
+                       //SOBRE ESCRIBO EL NUEVO .JSON
+                        try {
+                            FileWriter file = new FileWriter(rutaJSON);
+                            file.write(json.toString());
+                            file.flush();
+                            traerDatosTabla();
+                        } catch (IOException ex) {
+                            Logger.getLogger(mainForm.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
+                        //System.out.println(json);
+                    } catch (FileNotFoundException ex) {
+                        Logger.getLogger(mainForm.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    }
+            }
+    }//GEN-LAST:event_borrarActionPerformed
+
     private void preHabitacionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_preHabitacionMouseClicked
         if(preHabitacion.isSelected())
         {
@@ -575,6 +568,96 @@ public class mainForm extends javax.swing.JFrame {
             locata.setEditable(true);
         }
     }//GEN-LAST:event_preHabitacionMouseClicked
+
+    //ESTE METODO SE ENCARGA DE LIMPIAR LOS CAMPOS
+    private void limpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_limpiarActionPerformed
+        restaurantes.setSelectedIndex(0);
+        locata.setText("");
+        observaciones.setText("");
+        horaFecha.datePicker.setText("");
+        horaFecha.timePicker.setText("");
+    }//GEN-LAST:event_limpiarActionPerformed
+
+    /***
+     * 
+     * ESTE METODO SE ENCARGA DE CREAR LAS NOTIFICACIONES Y GUARDARLAS EN LA BASE DE DATOS.
+     * TENER EN CUENTA QUE LA BASE DE DATOS NO ES MAS QUE UN .JSON, EL CUAL LEO, AGREGO LOS NUEVOS REGISTROS Y VUELVO A SOBREESCRIBIR
+     */
+    private void agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregarActionPerformed
+
+        //CONDICION PARA QUE NO SE GUARDEN DATOS EN BLANCO
+        if(restaurantes.getSelectedIndex() != 0 && locata.getText().length() != 0 &&
+            observaciones.getText().length() != 0 && horaFecha.datePicker.getText().length() != 0 &&
+            horaFecha.timePicker.getText().length() != 0)
+        {
+            int opcion = JOptionPane.showConfirmDialog(rootPane, "AGREGAR ESTE RECORDATORIO?",
+                "CONFIRMACION", JOptionPane.YES_NO_OPTION);
+            if(opcion == 0)
+            {
+
+                String rutaJSON = System.getProperty("user.dir") + "\\DBB.json";//RUTA DEL .JSON
+
+                JsonParser parse = new JsonParser();
+
+                try {
+                    Object obj = parse.parse(new FileReader(rutaJSON));//LEO EL JSON
+                    JsonObject json = (JsonObject) obj;//JSON OBJECT
+                    JsonArray array = (JsonArray) json.get("datos");//ARRAY DE DATOS
+                    int tDatos = json.get("total-datos").getAsInt();//TOTAL DE DATOS INGRESADOS
+
+                    JsonObject cuerpoNuevoDato = new JsonObject();
+                    String key = randomString(10);//LA KEY DE CADA REGISTRO ES ALEATORIA
+
+                    /*CREO EL CUERPO DEL OBJETO QUE AGREGARE AL ARRAY*/
+                    cuerpoNuevoDato.addProperty("RESTAURANTES", restaurantes.getSelectedItem().toString());
+                    cuerpoNuevoDato.addProperty("HABITACION", locata.getText());
+                    cuerpoNuevoDato.addProperty("OBSERVACIONES", observaciones.getText());
+                    cuerpoNuevoDato.addProperty("FECHA", horaFecha.datePicker.getText());
+                    cuerpoNuevoDato.addProperty("HORA", horaFecha.timePicker.getText());
+                    cuerpoNuevoDato.addProperty("C.ADULTOS", cAdultos.getValue().toString());
+                    cuerpoNuevoDato.addProperty("C.NIÑOS", cNinos.getValue().toString());
+                    /******************************************************************************************/
+
+                    cuerpoNuevoDato.addProperty("KEY", key);
+                    array.add(cuerpoNuevoDato);
+
+                    json.add("datos", array);
+                    json.addProperty("total-datos", tDatos+ 1);
+                    json.addProperty("ultimo-dato", key);
+
+                    //SOBRE ESCRIBO EL NUEVO .JSON
+                    try {
+                        FileWriter file = new FileWriter(rutaJSON);
+                        file.write(json.toString());
+                        file.flush();
+
+                        restaurantes.setSelectedIndex(0);
+                        locata.setText("");
+                        observaciones.setText("");
+                        horaFecha.datePicker.setText("");
+                        horaFecha.timePicker.setText("");
+
+                        preHabitacion.setSelected(false);
+                    } catch (IOException ex) {
+                        Logger.getLogger(mainForm.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                    //System.out.println(json);
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(mainForm.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            }else
+            {
+                //System.out.println("NO!");
+            }
+        }else
+        {
+            JOptionPane.showMessageDialog(null, "FAVOR LLENAR TODOS LOS CAMPOS", "ERROR!", JOptionPane.ERROR_MESSAGE);
+
+        }
+
+    }//GEN-LAST:event_agregarActionPerformed
 
     static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     static SecureRandom rnd = new SecureRandom();
@@ -594,12 +677,16 @@ public class mainForm extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton agregar;
     private javax.swing.JButton borrar;
+    private javax.swing.JSpinner cAdultos;
+    private javax.swing.JSpinner cNinos;
     private javax.swing.JButton editar;
     private com.github.lgooddatepicker.components.DateTimePicker horaFecha;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
