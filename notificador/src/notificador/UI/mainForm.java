@@ -35,11 +35,13 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.basic.BasicLookAndFeel;
 import javax.swing.table.DefaultTableModel;
+
 /**
- *ESTA CLASE SE ENCARGA DE MOSTRAR LA UI PRINCIPAL DEL PROGRAMA DONDE SE PUEDE AGREGAR, MODIFICAR Y BORRAR NOTIFICACIONES
- * 
+ * ESTA CLASE SE ENCARGA DE MOSTRAR LA UI PRINCIPAL DEL PROGRAMA DONDE SE PUEDE
+ * AGREGAR, MODIFICAR Y BORRAR NOTIFICACIONES
+ *
  * @author Merli Mejia Tavarez - merlimejia2@gmail.com
- * 
+ *
  */
 public class mainForm extends javax.swing.JFrame {
 
@@ -52,54 +54,50 @@ public class mainForm extends javax.swing.JFrame {
             Logger.getLogger(mainForm.class.getName()).log(Level.SEVERE, null, ex);
             //System.out.println("PROBLEMA!");
         }
-        
-        for(Window window : getWindows()) {//ACTUALIZAR EL LOOK AND FEEL DE TODAS MIS VENTANAS
+
+        for (Window window : getWindows()) {//ACTUALIZAR EL LOOK AND FEEL DE TODAS MIS VENTANAS
             SwingUtilities.updateComponentTreeUI(window);
         }
-        
+
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();//OBTENER TAMAÑO DE PANTALLA
         setLocation((screenSize.width - getSize().width) / 2, (screenSize.height - getSize().height) / 2);//PONER EN EL MEDIO DE LA PANTALLA
-        
-        
+        traerDatosTabla();
+
         setVisible(true);
         tabulador.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-               if(tabulador.getSelectedIndex() == 1)
-               {
-                   traerDatosTabla();
-               }
+                if (tabulador.getSelectedIndex() == 1) {
+                    traerDatosTabla();
+                }
             }
         });
-        
-        
-        
+
     }
+
     /**
      * ESTE METODO 0
      */
-    void traerDatosTabla()
-    {
+    void traerDatosTabla() {
         String rutaJSON = System.getProperty("user.dir") + "\\DBB.json";//RUTA DEL .JSON
-                
+
         JsonParser parse = new JsonParser();
-        
+
         try {
             JsonObject objeto = (JsonObject) parse.parse(new FileReader(rutaJSON));
             JsonArray array = (JsonArray) objeto.get("datos");
             DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
             modelo.setRowCount(0);
-            for(int i = 0; i < array.size(); i++)
-            {
+            for (int i = 0; i < array.size(); i++) {
                 JsonObject item = (JsonObject) array.get(i);
-                Object[] fila = new Object[]{item.get("RESTAURANTES").toString().replace("\"", ""), 
-                    item.get("HABITACION").toString().replace("\"", ""), item.get("OBSERVACIONES").toString().replace("\"", ""), 
-                    item.get("HORA").toString().replace("\"", ""), item.get("FECHA").toString().replace("\"", ""), 
+                Object[] fila = new Object[]{item.get("RESTAURANTES").toString().replace("\"", ""),
+                    item.get("HABITACION").toString().replace("\"", ""), item.get("OBSERVACIONES").toString().replace("\"", ""),
+                    item.get("HORA").toString().replace("\"", ""), item.get("FECHA").toString().replace("\"", ""),
                     item.get("C.ADULTOS").toString().replace("\"", ""), item.get("C.NIÑOS").toString().replace("\"", "")};
-                
+
                 modelo.addRow(fila);
             }
-            
+
         } catch (FileNotFoundException ex) {
             Logger.getLogger(mainForm.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -134,7 +132,6 @@ public class mainForm extends javax.swing.JFrame {
         editar = new javax.swing.JButton();
         borrar = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("J-Notifier");
         setBackground(new java.awt.Color(44, 44, 44));
         setName("formulario"); // NOI18N
@@ -186,11 +183,11 @@ public class mainForm extends javax.swing.JFrame {
             }
         });
 
-        jLabel5.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jLabel5.setText("CANT. ADULTOS");
+        jLabel5.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
 
-        jLabel6.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jLabel6.setText("CANT. NIÑOS");
+        jLabel6.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
 
         javax.swing.GroupLayout panelAgregarLayout = new javax.swing.GroupLayout(panelAgregar);
         panelAgregar.setLayout(panelAgregarLayout);
@@ -339,6 +336,8 @@ public class mainForm extends javax.swing.JFrame {
 
         tabulador.addTab("MODIFICAR", jPanel2);
 
+        tabulador.setSelectedIndex(1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -358,15 +357,13 @@ public class mainForm extends javax.swing.JFrame {
     private void tablaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaMouseClicked
 
         filaSeleccionada.clear();
-        if(editandoFila == false)
-        {
+        if (editandoFila == false) {
             nFila = tabla.getSelectedRow();
         }
-        
+
         tabla.changeSelection(nFila, tabla.getSelectedColumn(), false, false);
-        
-        for(int i = 0; i < tabla.getColumnCount(); i++)
-        {
+
+        for (int i = 0; i < tabla.getColumnCount(); i++) {
             //System.out.println(tabla.getValueAt(tabla.getSelectedRow(), i));
             filaSeleccionada.add((String) tabla.getValueAt(tabla.getSelectedRow(), i));
         }
@@ -377,13 +374,10 @@ public class mainForm extends javax.swing.JFrame {
     private void editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editarActionPerformed
         //System.out.println(System.getProperty("user.dir"));
         int fila = tabla.getSelectedRow();
-        if(editandoFila == false)
-        {
-            if(fila == -1)
-            {
+        if (editandoFila == false) {
+            if (fila == -1) {
                 JOptionPane.showMessageDialog(rootPane, "POR FAVOR SELECCIONE UNA FILA", "ERROR!", JOptionPane.ERROR_MESSAGE);
-            }else
-            {
+            } else {
                 String rutaIcono = "notificador/resources/check.png";
                 //System.out.println(rutaIcono + "\n" + fila);
                 editar.setText("ACEPTAR");
@@ -392,177 +386,163 @@ public class mainForm extends javax.swing.JFrame {
                 editandoFila = true;
                 tabla.setSelectionBackground(Color.lightGray);
                 tabla.setSelectionForeground(Color.black);
-                
+
                 JTextField texto = new JTextField();
                 DateTimePicker fechaHora = new DateTimePicker();
                 JSpinner spinner = new JSpinner();
-                
+
                 texto.setText((String) tabla.getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn()));
-                
-                if(tabla.getSelectedColumn() >= 3)
-                {
-                    if(tabla.getSelectedColumn() == 3)
-                    {
+
+                if (tabla.getSelectedColumn() >= 3) {
+                    if (tabla.getSelectedColumn() == 3) {
                         fechaHora.timePicker.setText((String) tabla.getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn()));
                         fechaHora.datePicker.setText((String) tabla.getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn() + 1));
-                        
+
                         JOptionPane.showMessageDialog(rootPane, fechaHora, "ESCRIBIR VALOR", JOptionPane.INFORMATION_MESSAGE);
-                        
+
                         tabla.setValueAt(fechaHora.timePicker.getText(), tabla.getSelectedRow(), tabla.getSelectedColumn());
                         tabla.setValueAt(fechaHora.datePicker.getText(), tabla.getSelectedRow(), tabla.getSelectedColumn() + 1);
-                    }else if(tabla.getSelectedColumn() == 4)
-                    {
+                    } else if (tabla.getSelectedColumn() == 4) {
                         fechaHora.timePicker.setText((String) tabla.getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn() - 1));
                         fechaHora.datePicker.setText((String) tabla.getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn()));
-                        
+
                         JOptionPane.showMessageDialog(rootPane, fechaHora, "ESCRIBIR VALOR", JOptionPane.INFORMATION_MESSAGE);
-                        
+
                         tabla.setValueAt(fechaHora.timePicker.getText(), tabla.getSelectedRow(), tabla.getSelectedColumn() - 1);
                         tabla.setValueAt(fechaHora.datePicker.getText(), tabla.getSelectedRow(), tabla.getSelectedColumn());
-                    }else
-                    {   
+                    } else {
                         spinner.setValue(Integer.parseInt((String) tabla.getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn())));
                         JOptionPane.showMessageDialog(rootPane, spinner, "ESCRIBIR VALOR", JOptionPane.INFORMATION_MESSAGE);
-                        
+
                         tabla.setValueAt(spinner.getValue().toString(), tabla.getSelectedRow(), tabla.getSelectedColumn());
                     }
-                    
-                    
-                    
-                }else
-                {
+
+                } else {
                     JOptionPane.showMessageDialog(rootPane, texto, "ESCRIBIR VALOR", JOptionPane.INFORMATION_MESSAGE);
-                    
+
                     tabla.setValueAt(texto.getText(), tabla.getSelectedRow(), tabla.getSelectedColumn());
                 }
-                
-                
-                
+
             }
 
-        }else
-        {
-            if(fila == -1)
-            {
+        } else {
+            if (fila == -1) {
                 JOptionPane.showMessageDialog(rootPane, "POR FAVOR SELECCIONE UNA FILA", "ERROR!", JOptionPane.ERROR_MESSAGE);
-            }else
-            {
+            } else {
                 String rutaIcono = "notificador/resources/pencil.png";
                 //System.out.println(rutaIcono + "\n" + fila);
                 editar.setText("EDITAR");
                 Icon icono = new ImageIcon(getClass().getClassLoader().getResource(rutaIcono));
                 editar.setIcon(icono);
                 editandoFila = false;
-                tabla.setSelectionBackground(new Color(75,110,175));
+                tabla.setSelectionBackground(new Color(75, 110, 175));
                 tabla.setSelectionForeground(Color.white);
-                
+
                 JsonObject objeto = new JsonObject();
-                
+
                 tabla.changeSelection(tabla.getSelectedRow(), 0, false, false);
-                for(int i = 0; i < tabla.getColumnCount(); i++)
-                { 
-                    objeto.addProperty(tabla.getColumnName(tabla.getSelectedColumn() + i), 
+                for (int i = 0; i < tabla.getColumnCount(); i++) {
+                    objeto.addProperty(tabla.getColumnName(tabla.getSelectedColumn() + i),
                             tabla.getValueAt(tabla.getSelectedRow(), i).toString());
-                    
+
                     //System.out.println(tabla.getColumnName(tabla.getSelectedColumn()) + "  " + tabla.getValueAt(tabla.getSelectedRow(), i).toString());
                 }
                 //System.out.println(objeto);
                 String rutaJSON = System.getProperty("user.dir") + "\\DBB.json";//RUTA DEL .JSON
-                
+
                 JsonParser parse = new JsonParser();
-                
+
                 try {
                     Object obj = parse.parse(new FileReader(rutaJSON));//LEO EL JSON
                     JsonObject json = (JsonObject) obj;//JSON OBJECT
-                    
+
                     JsonArray array = (JsonArray) json.get("datos");//ARRAY DE DATOS
-                    
+
                     JsonElement filaObtenida = array.get(tabla.getSelectedRow());
                     JsonObject nuevo = (JsonObject) filaObtenida;
-                    
+
                     objeto.add("KEY", nuevo.get("KEY"));
 
                     array.set(tabla.getSelectedRow(), objeto);
                     json.add("datos", array);
-                    
-                   //SOBRE ESCRIBO EL NUEVO .JSON
+
+                    //SOBRE ESCRIBO EL NUEVO .JSON
                     try {
                         FileWriter file = new FileWriter(rutaJSON);
                         file.write(json.toString());
                         file.flush();
-                        
+
                         restaurantes.setSelectedIndex(0);
                         locata.setText("");
                         observaciones.setText("");
                         horaFecha.datePicker.setText("");
                         horaFecha.timePicker.setText("");
-                        
+
                         preHabitacion.setSelected(false);
+                        notificador.Notificador.datos = notificador.Notificador.obtenerDatos();
+                        notificador.Notificador.arrancar(notificador.Notificador.datos);
                     } catch (IOException ex) {
                         Logger.getLogger(mainForm.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    
+
                     //System.out.println(json);
                 } catch (FileNotFoundException ex) {
                     Logger.getLogger(mainForm.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                
+
                 //System.out.println(array);
             }
-            
+
         }
     }//GEN-LAST:event_editarActionPerformed
 
     private void borrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_borrarActionPerformed
         int fila = tabla.getSelectedRow();
-         if(fila == -1)
-            {
-                JOptionPane.showMessageDialog(rootPane, "POR FAVOR SELECCIONE UNA FILA", "ERROR!", JOptionPane.ERROR_MESSAGE);
-            }else
-            {
-                int opcion = JOptionPane.showConfirmDialog(rootPane, "BORRAR ESTE RECORDATORIO?", 
-                "CONFIRMACION", JOptionPane.YES_NO_OPTION);
-                
-                if(opcion == 0)
-                {
-                    String rutaJSON = System.getProperty("user.dir") + "\\DBB.json";//RUTA DEL .JSON
-                
-                    JsonParser parse = new JsonParser();
+        if (fila == -1) {
+            JOptionPane.showMessageDialog(rootPane, "POR FAVOR SELECCIONE UNA FILA", "ERROR!", JOptionPane.ERROR_MESSAGE);
+        } else {
+            int opcion = JOptionPane.showConfirmDialog(rootPane, "BORRAR ESTE RECORDATORIO?",
+                    "CONFIRMACION", JOptionPane.YES_NO_OPTION);
 
+            if (opcion == 0) {
+                String rutaJSON = System.getProperty("user.dir") + "\\DBB.json";//RUTA DEL .JSON
+
+                JsonParser parse = new JsonParser();
+
+                try {
+                    Object obj = parse.parse(new FileReader(rutaJSON));//LEO EL JSON
+                    JsonObject json = (JsonObject) obj;//JSON OBJECT
+
+                    JsonArray array = (JsonArray) json.get("datos");//ARRAY DE DATOS
+                    array.remove(tabla.getSelectedRow());
+
+                    json.add("datos", array);
+
+                    //SOBRE ESCRIBO EL NUEVO .JSON
                     try {
-                        Object obj = parse.parse(new FileReader(rutaJSON));//LEO EL JSON
-                        JsonObject json = (JsonObject) obj;//JSON OBJECT
-
-                        JsonArray array = (JsonArray) json.get("datos");//ARRAY DE DATOS
-                        array.remove(tabla.getSelectedRow());
-                        
-                        json.add("datos", array);
-
-                       //SOBRE ESCRIBO EL NUEVO .JSON
-                        try {
-                            FileWriter file = new FileWriter(rutaJSON);
-                            file.write(json.toString());
-                            file.flush();
-                            traerDatosTabla();
-                        } catch (IOException ex) {
-                            Logger.getLogger(mainForm.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-
-                        //System.out.println(json);
-                    } catch (FileNotFoundException ex) {
+                        FileWriter file = new FileWriter(rutaJSON);
+                        file.write(json.toString());
+                        file.flush();
+                        traerDatosTabla();
+                        notificador.Notificador.datos = notificador.Notificador.obtenerDatos();
+                        notificador.Notificador.arrancar(notificador.Notificador.datos);
+                    } catch (IOException ex) {
                         Logger.getLogger(mainForm.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    }
+
+                    //System.out.println(json);
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(mainForm.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
+        }
     }//GEN-LAST:event_borrarActionPerformed
 
     private void preHabitacionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_preHabitacionMouseClicked
-        if(preHabitacion.isSelected())
-        {
+        if (preHabitacion.isSelected()) {
             locata.setText("PRE-SELECCIONADA");
             locata.setEditable(false);
-        }else
-        {
+        } else {
             locata.setText("");
             locata.setEditable(true);
         }
@@ -577,22 +557,22 @@ public class mainForm extends javax.swing.JFrame {
         horaFecha.timePicker.setText("");
     }//GEN-LAST:event_limpiarActionPerformed
 
-    /***
-     * 
-     * ESTE METODO SE ENCARGA DE CREAR LAS NOTIFICACIONES Y GUARDARLAS EN LA BASE DE DATOS.
-     * TENER EN CUENTA QUE LA BASE DE DATOS NO ES MAS QUE UN .JSON, EL CUAL LEO, AGREGO LOS NUEVOS REGISTROS Y VUELVO A SOBREESCRIBIR
+    /**
+     * *
+     *
+     * ESTE METODO SE ENCARGA DE CREAR LAS NOTIFICACIONES Y GUARDARLAS EN LA
+     * BASE DE DATOS. TENER EN CUENTA QUE LA BASE DE DATOS NO ES MAS QUE UN
+     * .JSON, EL CUAL LEO, AGREGO LOS NUEVOS REGISTROS Y VUELVO A SOBREESCRIBIR
      */
     private void agregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregarActionPerformed
 
         //CONDICION PARA QUE NO SE GUARDEN DATOS EN BLANCO
-        if(restaurantes.getSelectedIndex() != 0 && locata.getText().length() != 0 &&
-            observaciones.getText().length() != 0 && horaFecha.datePicker.getText().length() != 0 &&
-            horaFecha.timePicker.getText().length() != 0)
-        {
+        if (restaurantes.getSelectedIndex() != 0 && locata.getText().length() != 0
+                && observaciones.getText().length() != 0 && horaFecha.datePicker.getText().length() != 0
+                && horaFecha.timePicker.getText().length() != 0) {
             int opcion = JOptionPane.showConfirmDialog(rootPane, "AGREGAR ESTE RECORDATORIO?",
-                "CONFIRMACION", JOptionPane.YES_NO_OPTION);
-            if(opcion == 0)
-            {
+                    "CONFIRMACION", JOptionPane.YES_NO_OPTION);
+            if (opcion == 0) {
 
                 String rutaJSON = System.getProperty("user.dir") + "\\DBB.json";//RUTA DEL .JSON
 
@@ -615,13 +595,15 @@ public class mainForm extends javax.swing.JFrame {
                     cuerpoNuevoDato.addProperty("HORA", horaFecha.timePicker.getText());
                     cuerpoNuevoDato.addProperty("C.ADULTOS", cAdultos.getValue().toString());
                     cuerpoNuevoDato.addProperty("C.NIÑOS", cNinos.getValue().toString());
-                    /******************************************************************************************/
+                    /**
+                     * ***************************************************************************************
+                     */
 
                     cuerpoNuevoDato.addProperty("KEY", key);
                     array.add(cuerpoNuevoDato);
 
                     json.add("datos", array);
-                    json.addProperty("total-datos", tDatos+ 1);
+                    json.addProperty("total-datos", tDatos + 1);
                     json.addProperty("ultimo-dato", key);
 
                     //SOBRE ESCRIBO EL NUEVO .JSON
@@ -637,6 +619,8 @@ public class mainForm extends javax.swing.JFrame {
                         horaFecha.timePicker.setText("");
 
                         preHabitacion.setSelected(false);
+                        notificador.Notificador.datos = notificador.Notificador.obtenerDatos();
+                        notificador.Notificador.arrancar(notificador.Notificador.datos);
                     } catch (IOException ex) {
                         Logger.getLogger(mainForm.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -646,12 +630,10 @@ public class mainForm extends javax.swing.JFrame {
                     Logger.getLogger(mainForm.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
-            }else
-            {
+            } else {
                 //System.out.println("NO!");
             }
-        }else
-        {
+        } else {
             JOptionPane.showMessageDialog(null, "FAVOR LLENAR TODOS LOS CAMPOS", "ERROR!", JOptionPane.ERROR_MESSAGE);
 
         }
@@ -662,15 +644,16 @@ public class mainForm extends javax.swing.JFrame {
     static SecureRandom rnd = new SecureRandom();
 
     /**
-     * 
+     *
      * @param len TAMAÑO DEL STRING QUE SE DEVOLVERA
      * @return RETORNA UNA CADENA TOTALMENTE RANDOM
      */
-    String randomString( int len ){
-       StringBuilder sb = new StringBuilder( len );
-       for( int i = 0; i < len; i++ ) 
-          sb.append( AB.charAt( rnd.nextInt(AB.length()) ) );
-       return sb.toString();
+    String randomString(int len) {
+        StringBuilder sb = new StringBuilder(len);
+        for (int i = 0; i < len; i++) {
+            sb.append(AB.charAt(rnd.nextInt(AB.length())));
+        }
+        return sb.toString();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
