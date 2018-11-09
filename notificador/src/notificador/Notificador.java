@@ -144,7 +144,6 @@ public class Notificador {
 
         System.out.println(Math.abs(diferencia));
         if (notificar == true) {
-            System.out.println("CONO");
             hilo = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -152,7 +151,7 @@ public class Notificador {
                         mainForm.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
                         notificar();
                         try {
-                            hilo.sleep(5 * 1000);
+                            hilo.sleep(60 * 1000);
                         } catch (InterruptedException ex) {
                             Logger.getLogger(Notificador.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -172,7 +171,7 @@ public class Notificador {
         {
             tray.remove(tray.getTrayIcons()[i]);
         }
-        Image image = Toolkit.getDefaultToolkit().createImage(resources.class.getResource("check.png"));
+        Image image = Toolkit.getDefaultToolkit().createImage(resources.class.getResource("logo.png"));
 
         TrayIcon trayIcon = new TrayIcon(image, "DEMO!");
         trayIcon.setImageAutoSize(true);

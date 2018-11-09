@@ -12,20 +12,29 @@ import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -35,6 +44,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.basic.BasicLookAndFeel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 /**
  * ESTA CLASE SE ENCARGA DE MOSTRAR LA UI PRINCIPAL DEL PROGRAMA DONDE SE PUEDE
@@ -72,6 +83,36 @@ public class mainForm extends javax.swing.JFrame {
                 }
             }
         });
+        String rutaIcono = "notificador/resources/logo.png";
+        setIconImage(Toolkit.getDefaultToolkit().createImage(getClass().getClassLoader().getResource(rutaIcono)));
+
+        preHabitacion.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (preHabitacion.isSelected()) {
+                    locata.setText("PRE-SELECCIONADA");
+                    locata.setEditable(false);
+                } else {
+                    locata.setText("");
+                    locata.setEditable(true);
+                }
+            }
+        });
+        
+        hoyFilter.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                traerDatosTabla();
+            }
+        });
+
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tabla.getModel());
+        tabla.setRowSorter(sorter);
+
+        List<RowSorter.SortKey> sortKeys = new ArrayList<>(25);
+        sortKeys.add(new RowSorter.SortKey(4, SortOrder.ASCENDING));
+        sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+        sorter.setSortKeys(sortKeys);
 
     }
 
@@ -79,6 +120,25 @@ public class mainForm extends javax.swing.JFrame {
      * ESTE METODO 0
      */
     void traerDatosTabla() {
+        Map<String, Integer> meses = new HashMap<>();
+        meses.put("enero", 1);
+        meses.put("febrero", 2);
+        meses.put("marzo", 3);
+        meses.put("abril", 4);
+        meses.put("mayo", 5);
+        meses.put("junio", 6);
+        meses.put("julio", 7);
+        meses.put("agosto", 8);
+        meses.put("septiembre", 9);
+        meses.put("octubre", 10);
+        meses.put("noviembre", 11);
+        meses.put("diciembre", 12);
+
+        LocalDateTime now = LocalDateTime.now();
+        int diaHoy = now.getDayOfMonth();
+        int mesActual = now.getMonthValue();
+        int anoActual = now.getYear();
+
         String rutaJSON = System.getProperty("user.dir") + "\\DBB.json";//RUTA DEL .JSON
 
         JsonParser parse = new JsonParser();
@@ -88,14 +148,38 @@ public class mainForm extends javax.swing.JFrame {
             JsonArray array = (JsonArray) objeto.get("datos");
             DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
             modelo.setRowCount(0);
-            for (int i = 0; i < array.size(); i++) {
-                JsonObject item = (JsonObject) array.get(i);
-                Object[] fila = new Object[]{item.get("RESTAURANTES").toString().replace("\"", ""),
-                    item.get("HABITACION").toString().replace("\"", ""), item.get("OBSERVACIONES").toString().replace("\"", ""),
-                    item.get("HORA").toString().replace("\"", ""), item.get("FECHA").toString().replace("\"", ""),
-                    item.get("C.ADULTOS").toString().replace("\"", ""), item.get("C.NIÑOS").toString().replace("\"", "")};
 
-                modelo.addRow(fila);
+            if (hoyFilter.isSelected()) {
+
+                for (int i = 0; i < array.size(); i++) {
+                    JsonObject item = (JsonObject) array.get(i);
+                    String[] c = item.get("FECHA").toString().replace(" de", "").replace("\"", "").split(" ");
+
+                    int dia = Integer.parseInt(c[0]);
+                    int mes = meses.get(c[1]);
+                    int ano = Integer.parseInt(c[2]);
+
+                    if (dia == diaHoy && mes == mesActual && ano == anoActual) {
+                        Object[] fila = new Object[]{item.get("RESTAURANTES").toString().replace("\"", ""),item.get("LOCATA").toString().replace("\"", ""),
+                            item.get("HABITACION").toString().replace("\"", ""), item.get("OBSERVACIONES").toString().replace("\"", ""),
+                            item.get("HORA").toString().replace("\"", ""), item.get("FECHA").toString().replace("\"", ""),
+                            item.get("C.ADULTOS").toString().replace("\"", ""), item.get("C.NIÑOS").toString().replace("\"", "")};
+
+                        modelo.addRow(fila);
+                    }
+
+                }
+
+            } else {
+                for (int i = 0; i < array.size(); i++) {
+                    JsonObject item = (JsonObject) array.get(i);
+                    Object[] fila = new Object[]{item.get("RESTAURANTES").toString().replace("\"", ""),item.get("LOCATA").toString().replace("\"", ""),
+                        item.get("HABITACION").toString().replace("\"", ""), item.get("OBSERVACIONES").toString().replace("\"", ""),
+                        item.get("HORA").toString().replace("\"", ""), item.get("FECHA").toString().replace("\"", ""),
+                        item.get("C.ADULTOS").toString().replace("\"", ""), item.get("C.NIÑOS").toString().replace("\"", "")};
+
+                    modelo.addRow(fila);
+                }
             }
 
         } catch (FileNotFoundException ex) {
@@ -126,11 +210,14 @@ public class mainForm extends javax.swing.JFrame {
         cAdultos = new javax.swing.JSpinner();
         jLabel6 = new javax.swing.JLabel();
         cNinos = new javax.swing.JSpinner();
+        laLocata = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabla = new javax.swing.JTable();
         editar = new javax.swing.JButton();
         borrar = new javax.swing.JButton();
+        hoyFilter = new javax.swing.JCheckBox();
 
         setTitle("J-Notifier");
         setBackground(new java.awt.Color(44, 44, 44));
@@ -177,17 +264,17 @@ public class mainForm extends javax.swing.JFrame {
         observaciones.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
 
         preHabitacion.setText("*PRE");
-        preHabitacion.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                preHabitacionMouseClicked(evt);
-            }
-        });
 
         jLabel5.setText("CANT. ADULTOS");
         jLabel5.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
 
         jLabel6.setText("CANT. NIÑOS");
         jLabel6.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+
+        laLocata.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+
+        jLabel7.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jLabel7.setText("LOCATA");
 
         javax.swing.GroupLayout panelAgregarLayout = new javax.swing.GroupLayout(panelAgregar);
         panelAgregar.setLayout(panelAgregarLayout);
@@ -210,19 +297,24 @@ public class mainForm extends javax.swing.JFrame {
                             .addComponent(jLabel1))
                         .addGap(18, 18, 18)
                         .addGroup(panelAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(locata, javax.swing.GroupLayout.PREFERRED_SIZE, 470, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(panelAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelAgregarLayout.createSequentialGroup()
+                                .addComponent(observaciones, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel5)
+                                .addGap(18, 18, 18)
+                                .addComponent(cAdultos, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel6)
+                                .addGap(18, 18, 18)
+                                .addComponent(cNinos, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(panelAgregarLayout.createSequentialGroup()
+                                .addComponent(locata, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
                                 .addComponent(preHabitacion)
-                                .addGroup(panelAgregarLayout.createSequentialGroup()
-                                    .addComponent(observaciones, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(jLabel5)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(cAdultos, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(jLabel6)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(cNinos, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel7)
+                                .addGap(18, 18, 18)
+                                .addComponent(laLocata, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(horaFecha, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(restaurantes, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addContainerGap(53, Short.MAX_VALUE))))
@@ -236,10 +328,13 @@ public class mainForm extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addComponent(restaurantes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(panelAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(locata, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(preHabitacion))
+                .addGroup(panelAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(locata, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel2)
+                        .addComponent(laLocata, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel7))
+                    .addComponent(preHabitacion, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addGap(18, 18, 18)
                 .addGroup(panelAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -256,28 +351,30 @@ public class mainForm extends javax.swing.JFrame {
                     .addComponent(horaFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGap(18, 18, 18)
+                .addGroup(panelAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(agregar)
                     .addComponent(limpiar))
-                .addContainerGap(30, Short.MAX_VALUE))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
 
         tabulador.addTab("AGREGAR", panelAgregar);
+
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 
         tabla.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "RESTAURANTES", "HABITACION", "OBSERVACIONES", "HORA", "FECHA", "C.ADULTOS", "C.NIÑOS"
+                "RESTAURANTES", "HABITACION", "LOCATA", "OBSERVACIONES", "HORA", "FECHA", "C.ADULTOS", "C.NIÑOS"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -288,6 +385,7 @@ public class mainForm extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        tabla.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
         tabla.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tablaMouseClicked(evt);
@@ -311,6 +409,10 @@ public class mainForm extends javax.swing.JFrame {
             }
         });
 
+        hoyFilter.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        hoyFilter.setSelected(true);
+        hoyFilter.setText("HOY?");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -322,16 +424,23 @@ public class mainForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(editar)
                 .addGap(35, 35, 35))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(hoyFilter)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
+                .addGap(7, 7, 7)
+                .addComponent(hoyFilter)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(editar)
                     .addComponent(borrar))
-                .addGap(22, 22, 22))
+                .addGap(10, 10, 10))
         );
 
         tabulador.addTab("MODIFICAR", jPanel2);
@@ -418,9 +527,26 @@ public class mainForm extends javax.swing.JFrame {
                     }
 
                 } else {
-                    JOptionPane.showMessageDialog(rootPane, texto, "ESCRIBIR VALOR", JOptionPane.INFORMATION_MESSAGE);
 
-                    tabla.setValueAt(texto.getText(), tabla.getSelectedRow(), tabla.getSelectedColumn());
+                    if (tabla.getSelectedColumn() == 0) {
+
+                        JComboBox combo = restaurantes;
+                        for (int i = 0; i < restaurantes.getItemCount(); i++) {
+                            if (restaurantes.getItemAt(i).toString().equals(tabla.getValueAt(tabla.getSelectedRow(),
+                                    tabla.getSelectedColumn()))) {
+                                combo.setSelectedIndex(i);
+                            }
+                        }
+                        JOptionPane.showMessageDialog(rootPane, combo, "ESCRIBIR VALOR", JOptionPane.INFORMATION_MESSAGE);
+
+                        tabla.setValueAt(texto.getText(), tabla.getSelectedRow(), tabla.getSelectedColumn());
+
+                    } else {
+                        JOptionPane.showMessageDialog(rootPane, texto, "ESCRIBIR VALOR", JOptionPane.INFORMATION_MESSAGE);
+
+                        tabla.setValueAt(texto.getText(), tabla.getSelectedRow(), tabla.getSelectedColumn());
+                    }
+
                 }
 
             }
@@ -538,16 +664,6 @@ public class mainForm extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_borrarActionPerformed
 
-    private void preHabitacionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_preHabitacionMouseClicked
-        if (preHabitacion.isSelected()) {
-            locata.setText("PRE-SELECCIONADA");
-            locata.setEditable(false);
-        } else {
-            locata.setText("");
-            locata.setEditable(true);
-        }
-    }//GEN-LAST:event_preHabitacionMouseClicked
-
     //ESTE METODO SE ENCARGA DE LIMPIAR LOS CAMPOS
     private void limpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_limpiarActionPerformed
         restaurantes.setSelectedIndex(0);
@@ -555,6 +671,9 @@ public class mainForm extends javax.swing.JFrame {
         observaciones.setText("");
         horaFecha.datePicker.setText("");
         horaFecha.timePicker.setText("");
+        cNinos.setValue(0);
+        cAdultos.setValue(0);
+        laLocata.setText("");
     }//GEN-LAST:event_limpiarActionPerformed
 
     /**
@@ -569,7 +688,7 @@ public class mainForm extends javax.swing.JFrame {
         //CONDICION PARA QUE NO SE GUARDEN DATOS EN BLANCO
         if (restaurantes.getSelectedIndex() != 0 && locata.getText().length() != 0
                 && observaciones.getText().length() != 0 && horaFecha.datePicker.getText().length() != 0
-                && horaFecha.timePicker.getText().length() != 0) {
+                && horaFecha.timePicker.getText().length() != 0 && (int)cAdultos.getValue() != 0 && laLocata.getText().length() != 0) {
             int opcion = JOptionPane.showConfirmDialog(rootPane, "AGREGAR ESTE RECORDATORIO?",
                     "CONFIRMACION", JOptionPane.YES_NO_OPTION);
             if (opcion == 0) {
@@ -590,11 +709,13 @@ public class mainForm extends javax.swing.JFrame {
                     /*CREO EL CUERPO DEL OBJETO QUE AGREGARE AL ARRAY*/
                     cuerpoNuevoDato.addProperty("RESTAURANTES", restaurantes.getSelectedItem().toString());
                     cuerpoNuevoDato.addProperty("HABITACION", locata.getText());
+                    cuerpoNuevoDato.addProperty("LOCATA", locata.getText());
                     cuerpoNuevoDato.addProperty("OBSERVACIONES", observaciones.getText());
                     cuerpoNuevoDato.addProperty("FECHA", horaFecha.datePicker.getText());
                     cuerpoNuevoDato.addProperty("HORA", horaFecha.timePicker.getText());
                     cuerpoNuevoDato.addProperty("C.ADULTOS", cAdultos.getValue().toString());
                     cuerpoNuevoDato.addProperty("C.NIÑOS", cNinos.getValue().toString());
+                    
                     /**
                      * ***************************************************************************************
                      */
@@ -617,6 +738,9 @@ public class mainForm extends javax.swing.JFrame {
                         observaciones.setText("");
                         horaFecha.datePicker.setText("");
                         horaFecha.timePicker.setText("");
+                        cNinos.setValue(0);
+                        cAdultos.setValue(0);
+                        laLocata.setText("");
 
                         preHabitacion.setSelected(false);
                         notificador.Notificador.datos = notificador.Notificador.obtenerDatos();
@@ -663,15 +787,18 @@ public class mainForm extends javax.swing.JFrame {
     private javax.swing.JSpinner cNinos;
     private javax.swing.JButton editar;
     private com.github.lgooddatepicker.components.DateTimePicker horaFecha;
+    private javax.swing.JCheckBox hoyFilter;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JTextField laLocata;
     private javax.swing.JButton limpiar;
     private javax.swing.JTextField locata;
     private javax.swing.JTextField observaciones;
