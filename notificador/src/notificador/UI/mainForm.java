@@ -600,7 +600,7 @@ public class mainForm extends javax.swing.JFrame {
                         }
                         JOptionPane.showMessageDialog(rootPane, combo, "ESCRIBIR VALOR", JOptionPane.INFORMATION_MESSAGE);
 
-                        tabla.setValueAt(texto.getText(), tabla.getSelectedRow(), tabla.getSelectedColumn());
+                        tabla.setValueAt(combo.getSelectedItem().toString(), tabla.getSelectedRow(), tabla.getSelectedColumn());
 
                     } else {
                         JOptionPane.showMessageDialog(rootPane, texto, "ESCRIBIR VALOR", JOptionPane.INFORMATION_MESSAGE);
