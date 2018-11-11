@@ -1,6 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+  <NonVisualComponents>
+    <Menu class="javax.swing.JMenuBar" name="jMenuBar1">
+      <SubComponents>
+        <Menu class="javax.swing.JMenu" name="cierreMenu">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="CIERRE"/>
+            <Property name="toolTipText" type="java.lang.String" value="PERMITE SELECCIONAR LA FECHA MAXIMA PARA RESERVAR"/>
+          </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="cierreMenuMouseClicked"/>
+          </Events>
+        </Menu>
+        <Menu class="javax.swing.JMenu" name="acercaDeMenu">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="CONOCER AL DESARROLLADOR"/>
+          </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="acercaDeMenuMouseClicked"/>
+          </Events>
+        </Menu>
+      </SubComponents>
+    </Menu>
+  </NonVisualComponents>
   <Properties>
     <Property name="title" type="java.lang.String" value="J-Notifier"/>
     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
@@ -10,6 +33,7 @@
     <Property name="resizable" type="boolean" value="false"/>
   </Properties>
   <SyntheticProperties>
+    <SyntheticProperty name="menuBar" type="java.lang.String" value="jMenuBar1"/>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
     <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
   </SyntheticProperties>
@@ -44,6 +68,7 @@
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Arial" size="18" style="1"/>
         </Property>
+        <Property name="toolTipText" type="java.lang.String" value=""/>
       </Properties>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
@@ -152,7 +177,7 @@
                           <Component id="agregar" min="-2" max="-2" attributes="0"/>
                           <Component id="limpiar" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="27" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -179,6 +204,7 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Arial" size="14" style="0"/>
                 </Property>
+                <Property name="toolTipText" type="java.lang.String" value="HABITACION EN LA CUAL ESTA/ESTARA EL HUESPED"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel3">
@@ -195,6 +221,7 @@
                   <Image iconType="3" name="/notificador/resources/plus.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="AGREGAR"/>
+                <Property name="toolTipText" type="java.lang.String" value="AGREGA UNA NUEVA NOTIFICACION DE RESERVA"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="agregarActionPerformed"/>
@@ -206,6 +233,7 @@
                   <Image iconType="3" name="/notificador/resources/notification-clear-all.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="LIMPIAR"/>
+                <Property name="toolTipText" type="java.lang.String" value="LIMPIA TODOS LOS CAMPOS DE ESTA PANTALLA"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="limpiarActionPerformed"/>
@@ -216,6 +244,7 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Arial" size="14" style="0"/>
                 </Property>
+                <Property name="toolTipText" type="java.lang.String" value="FECHA Y HORA PARA LA CUAL EL HUESPED DESEA SU RESERVA"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="restaurantes">
@@ -234,6 +263,7 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Arial" size="14" style="0"/>
                 </Property>
+                <Property name="toolTipText" type="java.lang.String" value="RESTAURANTE AL CUAL SE HARA LA RESERVA"/>
               </Properties>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
@@ -252,6 +282,7 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Arial" size="14" style="0"/>
                 </Property>
+                <Property name="toolTipText" type="java.lang.String" value="OBSERVACIONES RELEVANTE ACERCA DE ESTA RESERVA"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JSeparator" name="jSeparator1">
@@ -259,6 +290,7 @@
             <Component class="javax.swing.JCheckBox" name="preHabitacion">
               <Properties>
                 <Property name="text" type="java.lang.String" value="*PRE"/>
+                <Property name="toolTipText" type="java.lang.String" value="CUANDO ESTA SELECCIONADA INDICA QUE EL HUESPED AUN NO TIENE HABITACION ASIGNADA"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel5">
@@ -270,6 +302,9 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JSpinner" name="cAdultos">
+              <Properties>
+                <Property name="toolTipText" type="java.lang.String" value="CANTIDAD DE PERSONAS ADULTAS QUE ASISTIRAN A LA RESERVA"/>
+              </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel6">
               <Properties>
@@ -280,20 +315,24 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JSpinner" name="cNinos">
+              <Properties>
+                <Property name="toolTipText" type="java.lang.String" value="CANTIDAD DE NI&#xd1;OS QUE ASISTIRAN A LA RESERVA"/>
+              </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="laLocata">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Arial" size="14" style="0"/>
                 </Property>
+                <Property name="toolTipText" type="java.lang.String" value="CODIGO CON EL CUAL SE LOCALIZA EL HUESPED EN EL SISTEMA NEW HOTEL"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel7">
               <Properties>
+                <Property name="text" type="java.lang.String" value="LOCATA"/>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Arial" size="14" style="1"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="LOCATA"/>
               </Properties>
             </Component>
           </SubComponents>
@@ -311,17 +350,17 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="jScrollPane1" alignment="0" pref="773" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="hoyFilter" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
+                  </Group>
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="32767" attributes="0"/>
                       <Component id="borrar" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="editar" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="hoyFilter" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -331,13 +370,13 @@
                       <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
                       <Component id="hoyFilter" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" pref="195" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" min="-2" pref="178" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="editar" min="-2" max="-2" attributes="0"/>
                           <Component id="borrar" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                      <EmptySpace pref="21" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -430,6 +469,7 @@
                   <Image iconType="3" name="/notificador/resources/pencil.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="EDITAR"/>
+                <Property name="toolTipText" type="java.lang.String" value="PERMITE EDITAR LA NOTIFICACION DE RESERVA SELECCIONADA"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editarActionPerformed"/>
@@ -441,6 +481,7 @@
                   <Image iconType="3" name="/notificador/resources/close.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="BORRAR"/>
+                <Property name="toolTipText" type="java.lang.String" value="BORRA LA NOTIFICACION DE RESERVA SELECCIONADA"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="borrarActionPerformed"/>
@@ -448,11 +489,12 @@
             </Component>
             <Component class="javax.swing.JCheckBox" name="hoyFilter">
               <Properties>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" value="PARA HOY?"/>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Dialog" size="14" style="1"/>
                 </Property>
-                <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="HOY?"/>
+                <Property name="toolTipText" type="java.lang.String" value="AL ESTAR SELECCIONADA MUESTRA TODAS LAS RESERVAS QUE PUEDEN SER AGREGADAS HOY"/>
               </Properties>
             </Component>
           </SubComponents>

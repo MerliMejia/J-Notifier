@@ -1,24 +1,24 @@
 package notificador.UI;
 
 import com.bulenkov.darcula.DarculaLaf;
+import com.github.lgooddatepicker.components.DatePicker;
 import com.github.lgooddatepicker.components.DateTimePicker;
-import com.github.lgooddatepicker.components.TimePicker;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URL;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -40,8 +40,6 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.basic.BasicLookAndFeel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -49,21 +47,40 @@ import javax.swing.table.TableRowSorter;
 
 /**
  * ESTA CLASE SE ENCARGA DE MOSTRAR LA UI PRINCIPAL DEL PROGRAMA DONDE SE PUEDE
- * AGREGAR, MODIFICAR Y BORRAR NOTIFICACIONES
+ * AGREGAR, MODIFICAR Y BORRAR NOTIFICACIONES Y PONER EL DIA DE CIERRE
  *
  * @author Merli Mejia Tavarez - merlimejia2@gmail.com
  *
  */
 public class mainForm extends javax.swing.JFrame {
 
+    private String cierre = "";//VARIABLE DONDE SE GUARDA LA FECHA MAXIMA PARA RESERVAR
+
+    private void obtenerCierre() {
+        String rutaJSON = System.getProperty("user.dir") + "\\DBB.json";//RUTA DEL .JSON
+
+        JsonParser parse = new JsonParser();
+        Object obj;
+        JsonObject json = null;
+        try {
+            obj = parse.parse(new FileReader(rutaJSON)); //LEO EL JSON
+            json = (JsonObject) obj;//JSON OBJECT
+            cierre = json.get("cierre").toString().replace("\"", "");
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(mainForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     public mainForm() {
+
+        obtenerCierre();
+        System.out.println("CIERRE: " + cierre);
         initComponents();
         BasicLookAndFeel darcula = new DarculaLaf();//LOOK AND FEEL DARCULA
         try {
             UIManager.setLookAndFeel(darcula);
         } catch (UnsupportedLookAndFeelException ex) {
             Logger.getLogger(mainForm.class.getName()).log(Level.SEVERE, null, ex);
-            //System.out.println("PROBLEMA!");
         }
 
         for (Window window : getWindows()) {//ACTUALIZAR EL LOOK AND FEEL DE TODAS MIS VENTANAS
@@ -98,7 +115,7 @@ public class mainForm extends javax.swing.JFrame {
                 }
             }
         });
-        
+
         hoyFilter.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
@@ -120,6 +137,7 @@ public class mainForm extends javax.swing.JFrame {
      * ESTE METODO 0
      */
     void traerDatosTabla() {
+        obtenerCierre();
         Map<String, Integer> meses = new HashMap<>();
         meses.put("enero", 1);
         meses.put("febrero", 2);
@@ -134,10 +152,10 @@ public class mainForm extends javax.swing.JFrame {
         meses.put("noviembre", 11);
         meses.put("diciembre", 12);
 
-        LocalDateTime now = LocalDateTime.now();
-        int diaHoy = now.getDayOfMonth();
-        int mesActual = now.getMonthValue();
-        int anoActual = now.getYear();
+        String[] cierreArray = cierre.replace(" de", "").replace("\"", "").split(" ");
+        int diaCierre = Integer.parseInt(cierreArray[0]);
+        int mesCierre = meses.get(cierreArray[1]);
+        int anoCierre = Integer.parseInt(cierreArray[2]);
 
         String rutaJSON = System.getProperty("user.dir") + "\\DBB.json";//RUTA DEL .JSON
 
@@ -158,23 +176,28 @@ public class mainForm extends javax.swing.JFrame {
                     int dia = Integer.parseInt(c[0]);
                     int mes = meses.get(c[1]);
                     int ano = Integer.parseInt(c[2]);
+                    int diferencia = 0;
 
-                    if (dia == diaHoy && mes == mesActual && ano == anoActual) {
-                        Object[] fila = new Object[]{item.get("RESTAURANTES").toString().replace("\"", ""),item.get("LOCATA").toString().replace("\"", ""),
-                            item.get("HABITACION").toString().replace("\"", ""), item.get("OBSERVACIONES").toString().replace("\"", ""),
+                    System.out.println("DIA: " + dia + "\n" + "MES: " + mes + "\n" + "Ano: " + ano);
+
+                    if (anoCierre >= ano && mesCierre >= mes && diaCierre >= dia) {
+                        System.out.println("SE PUEDE AGREGAR!");
+                        Object[] fila = new Object[]{item.get("RESTAURANTES").toString().replace("\"", ""), item.get("HABITACION").toString().replace("\"", ""),
+                            item.get("LOCATA").toString().replace("\"", ""), item.get("OBSERVACIONES").toString().replace("\"", ""),
                             item.get("HORA").toString().replace("\"", ""), item.get("FECHA").toString().replace("\"", ""),
                             item.get("C.ADULTOS").toString().replace("\"", ""), item.get("C.NIÑOS").toString().replace("\"", "")};
 
                         modelo.addRow(fila);
+                    } else {
+                        System.out.println("NO SE PUEDE AGREGAR AUN!");
                     }
-
                 }
 
             } else {
                 for (int i = 0; i < array.size(); i++) {
                     JsonObject item = (JsonObject) array.get(i);
-                    Object[] fila = new Object[]{item.get("RESTAURANTES").toString().replace("\"", ""),item.get("LOCATA").toString().replace("\"", ""),
-                        item.get("HABITACION").toString().replace("\"", ""), item.get("OBSERVACIONES").toString().replace("\"", ""),
+                    Object[] fila = new Object[]{item.get("RESTAURANTES").toString().replace("\"", ""), item.get("HABITACION").toString().replace("\"", ""),
+                        item.get("LOCATA").toString().replace("\"", ""), item.get("OBSERVACIONES").toString().replace("\"", ""),
                         item.get("HORA").toString().replace("\"", ""), item.get("FECHA").toString().replace("\"", ""),
                         item.get("C.ADULTOS").toString().replace("\"", ""), item.get("C.NIÑOS").toString().replace("\"", "")};
 
@@ -218,6 +241,9 @@ public class mainForm extends javax.swing.JFrame {
         editar = new javax.swing.JButton();
         borrar = new javax.swing.JButton();
         hoyFilter = new javax.swing.JCheckBox();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        cierreMenu = new javax.swing.JMenu();
+        acercaDeMenu = new javax.swing.JMenu();
 
         setTitle("J-Notifier");
         setBackground(new java.awt.Color(44, 44, 44));
@@ -225,6 +251,7 @@ public class mainForm extends javax.swing.JFrame {
         setResizable(false);
 
         tabulador.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        tabulador.setToolTipText("");
 
         jLabel1.setText("RESTAURANTE");
         jLabel1.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
@@ -233,12 +260,14 @@ public class mainForm extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
 
         locata.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        locata.setToolTipText("HABITACION EN LA CUAL ESTA/ESTARA EL HUESPED");
 
         jLabel3.setText("FECHA/HORA");
         jLabel3.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
 
         agregar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/notificador/resources/plus.png"))); // NOI18N
         agregar.setText("AGREGAR");
+        agregar.setToolTipText("AGREGA UNA NUEVA NOTIFICACION DE RESERVA");
         agregar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 agregarActionPerformed(evt);
@@ -247,6 +276,7 @@ public class mainForm extends javax.swing.JFrame {
 
         limpiar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/notificador/resources/notification-clear-all.png"))); // NOI18N
         limpiar.setText("LIMPIAR");
+        limpiar.setToolTipText("LIMPIA TODOS LOS CAMPOS DE ESTA PANTALLA");
         limpiar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 limpiarActionPerformed(evt);
@@ -254,27 +284,36 @@ public class mainForm extends javax.swing.JFrame {
         });
 
         horaFecha.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        horaFecha.setToolTipText("FECHA Y HORA PARA LA CUAL EL HUESPED DESEA SU RESERVA");
 
         restaurantes.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "SELECCIONE RESTAURANTE", "LE GOURMET", "EL PESCADOR", "IL CAPPRICIO", "DON PABLO", "RODIZIO", "TAKARA" }));
         restaurantes.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        restaurantes.setToolTipText("RESTAURANTE AL CUAL SE HARA LA RESERVA");
 
         jLabel4.setText("OBSERVACIONES");
         jLabel4.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
 
         observaciones.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        observaciones.setToolTipText("OBSERVACIONES RELEVANTE ACERCA DE ESTA RESERVA");
 
         preHabitacion.setText("*PRE");
+        preHabitacion.setToolTipText("CUANDO ESTA SELECCIONADA INDICA QUE EL HUESPED AUN NO TIENE HABITACION ASIGNADA");
 
         jLabel5.setText("CANT. ADULTOS");
         jLabel5.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
 
+        cAdultos.setToolTipText("CANTIDAD DE PERSONAS ADULTAS QUE ASISTIRAN A LA RESERVA");
+
         jLabel6.setText("CANT. NIÑOS");
         jLabel6.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
 
-        laLocata.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        cNinos.setToolTipText("CANTIDAD DE NIÑOS QUE ASISTIRAN A LA RESERVA");
 
-        jLabel7.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        laLocata.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        laLocata.setToolTipText("CODIGO CON EL CUAL SE LOCALIZA EL HUESPED EN EL SISTEMA NEW HOTEL");
+
         jLabel7.setText("LOCATA");
+        jLabel7.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
 
         javax.swing.GroupLayout panelAgregarLayout = new javax.swing.GroupLayout(panelAgregar);
         panelAgregar.setLayout(panelAgregarLayout);
@@ -355,7 +394,7 @@ public class mainForm extends javax.swing.JFrame {
                 .addGroup(panelAgregarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(agregar)
                     .addComponent(limpiar))
-                .addContainerGap(27, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         tabulador.addTab("AGREGAR", panelAgregar);
@@ -395,6 +434,7 @@ public class mainForm extends javax.swing.JFrame {
 
         editar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/notificador/resources/pencil.png"))); // NOI18N
         editar.setText("EDITAR");
+        editar.setToolTipText("PERMITE EDITAR LA NOTIFICACION DE RESERVA SELECCIONADA");
         editar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editarActionPerformed(evt);
@@ -403,31 +443,33 @@ public class mainForm extends javax.swing.JFrame {
 
         borrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/notificador/resources/close.png"))); // NOI18N
         borrar.setText("BORRAR");
+        borrar.setToolTipText("BORRA LA NOTIFICACION DE RESERVA SELECCIONADA");
         borrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 borrarActionPerformed(evt);
             }
         });
 
-        hoyFilter.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         hoyFilter.setSelected(true);
-        hoyFilter.setText("HOY?");
+        hoyFilter.setText("PARA HOY?");
+        hoyFilter.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        hoyFilter.setToolTipText("AL ESTAR SELECCIONADA MUESTRA TODAS LAS RESERVAS QUE PUEDEN SER AGREGADAS HOY");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 773, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(hoyFilter)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(borrar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(editar)
-                .addGap(35, 35, 35))
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(hoyFilter)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(34, 34, 34))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -435,17 +477,36 @@ public class mainForm extends javax.swing.JFrame {
                 .addGap(7, 7, 7)
                 .addComponent(hoyFilter)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(editar)
                     .addComponent(borrar))
-                .addGap(10, 10, 10))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         tabulador.addTab("MODIFICAR", jPanel2);
 
         tabulador.setSelectedIndex(1);
+
+        cierreMenu.setText("CIERRE");
+        cierreMenu.setToolTipText("PERMITE SELECCIONAR LA FECHA MAXIMA PARA RESERVAR");
+        cierreMenu.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                cierreMenuMouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(cierreMenu);
+
+        acercaDeMenu.setText("CONOCER AL DESARROLLADOR");
+        acercaDeMenu.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                acercaDeMenuMouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(acercaDeMenu);
+
+        setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -502,8 +563,8 @@ public class mainForm extends javax.swing.JFrame {
 
                 texto.setText((String) tabla.getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn()));
 
-                if (tabla.getSelectedColumn() >= 3) {
-                    if (tabla.getSelectedColumn() == 3) {
+                if (tabla.getSelectedColumn() > 3) {
+                    if (tabla.getSelectedColumn() == 4) {
                         fechaHora.timePicker.setText((String) tabla.getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn()));
                         fechaHora.datePicker.setText((String) tabla.getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn() + 1));
 
@@ -511,7 +572,7 @@ public class mainForm extends javax.swing.JFrame {
 
                         tabla.setValueAt(fechaHora.timePicker.getText(), tabla.getSelectedRow(), tabla.getSelectedColumn());
                         tabla.setValueAt(fechaHora.datePicker.getText(), tabla.getSelectedRow(), tabla.getSelectedColumn() + 1);
-                    } else if (tabla.getSelectedColumn() == 4) {
+                    } else if (tabla.getSelectedColumn() == 5) {
                         fechaHora.timePicker.setText((String) tabla.getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn() - 1));
                         fechaHora.datePicker.setText((String) tabla.getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn()));
 
@@ -688,7 +749,7 @@ public class mainForm extends javax.swing.JFrame {
         //CONDICION PARA QUE NO SE GUARDEN DATOS EN BLANCO
         if (restaurantes.getSelectedIndex() != 0 && locata.getText().length() != 0
                 && observaciones.getText().length() != 0 && horaFecha.datePicker.getText().length() != 0
-                && horaFecha.timePicker.getText().length() != 0 && (int)cAdultos.getValue() != 0 && laLocata.getText().length() != 0) {
+                && horaFecha.timePicker.getText().length() != 0 && (int) cAdultos.getValue() != 0 && laLocata.getText().length() != 0) {
             int opcion = JOptionPane.showConfirmDialog(rootPane, "AGREGAR ESTE RECORDATORIO?",
                     "CONFIRMACION", JOptionPane.YES_NO_OPTION);
             if (opcion == 0) {
@@ -709,17 +770,16 @@ public class mainForm extends javax.swing.JFrame {
                     /*CREO EL CUERPO DEL OBJETO QUE AGREGARE AL ARRAY*/
                     cuerpoNuevoDato.addProperty("RESTAURANTES", restaurantes.getSelectedItem().toString());
                     cuerpoNuevoDato.addProperty("HABITACION", locata.getText());
-                    cuerpoNuevoDato.addProperty("LOCATA", locata.getText());
+                    cuerpoNuevoDato.addProperty("LOCATA", laLocata.getText());
                     cuerpoNuevoDato.addProperty("OBSERVACIONES", observaciones.getText());
                     cuerpoNuevoDato.addProperty("FECHA", horaFecha.datePicker.getText());
                     cuerpoNuevoDato.addProperty("HORA", horaFecha.timePicker.getText());
                     cuerpoNuevoDato.addProperty("C.ADULTOS", cAdultos.getValue().toString());
                     cuerpoNuevoDato.addProperty("C.NIÑOS", cNinos.getValue().toString());
-                    
+
                     /**
                      * ***************************************************************************************
                      */
-
                     cuerpoNuevoDato.addProperty("KEY", key);
                     array.add(cuerpoNuevoDato);
 
@@ -764,6 +824,72 @@ public class mainForm extends javax.swing.JFrame {
 
     }//GEN-LAST:event_agregarActionPerformed
 
+    private void cierreMenuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cierreMenuMouseClicked
+        DatePicker fecha = new DatePicker();
+        Map<Integer, String> meses = new HashMap<>();
+        meses.put(1, "enero");
+        meses.put(2, "febrero");
+        meses.put(3, "marzo");
+        meses.put(4, "abril");
+        meses.put(5, "mayo");
+        meses.put(6, "junio");
+        meses.put(7, "julio");
+        meses.put(8, "agosto");
+        meses.put(9, "septiembre");
+        meses.put(10, "octubre");
+        meses.put(11, "noviembre");
+        meses.put(12, "diciembre");
+
+        LocalDateTime now = LocalDateTime.now();
+        int diaHoy = now.getDayOfMonth();
+        int mesActual = now.getMonthValue();
+        int anoActual = now.getYear();
+        //System.out.println(mesActual);
+
+        String rutaJSON = System.getProperty("user.dir") + "\\DBB.json";//RUTA DEL .JSON
+
+        JsonParser parse = new JsonParser();
+        Object obj;
+        JsonObject json = null;
+        try {
+            obj = parse.parse(new FileReader(rutaJSON)); //LEO EL JSON
+            json = (JsonObject) obj;//JSON OBJECT
+            System.out.println(json.get("cierre").toString().replace("\"", "").length());
+            if (json.get("cierre").toString().replace("\"", "").length() == 0) {
+                fecha.setText(diaHoy + " de " + meses.get(mesActual) + " de " + anoActual);
+            } else {
+                fecha.setText(json.get("cierre").toString().replace("\"", ""));
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(mainForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        JOptionPane.showMessageDialog(rootPane, fecha, "ACTUALIZAR CIERRE", JOptionPane.INFORMATION_MESSAGE);
+
+        json.addProperty("cierre", fecha.getText());
+
+        try {
+            FileWriter file = new FileWriter(rutaJSON);
+            file.write(json.toString());
+            file.flush();
+            hoyFilter.setSelected(false);
+            notificador.Notificador.datos = notificador.Notificador.obtenerDatos();
+            notificador.Notificador.arrancar(notificador.Notificador.datos);
+        } catch (IOException ex) {
+            Logger.getLogger(mainForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        System.out.println("CIERRE: " + fecha.getText());
+    }//GEN-LAST:event_cierreMenuMouseClicked
+
+    private void acercaDeMenuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_acercaDeMenuMouseClicked
+        try {
+            Desktop.getDesktop().browse(new URL("https://github.com/MerliMejia").toURI());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_acercaDeMenuMouseClicked
+
     static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     static SecureRandom rnd = new SecureRandom();
 
@@ -781,10 +907,12 @@ public class mainForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenu acercaDeMenu;
     private javax.swing.JButton agregar;
     private javax.swing.JButton borrar;
     private javax.swing.JSpinner cAdultos;
     private javax.swing.JSpinner cNinos;
+    private javax.swing.JMenu cierreMenu;
     private javax.swing.JButton editar;
     private com.github.lgooddatepicker.components.DateTimePicker horaFecha;
     private javax.swing.JCheckBox hoyFilter;
@@ -795,6 +923,7 @@ public class mainForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;

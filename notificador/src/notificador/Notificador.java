@@ -30,6 +30,7 @@ public class Notificador {
 
     private static Map<String, Integer> meses = new HashMap<>();
     public static Thread hilo;
+    private static String cierre = "";
 
     public static JsonArray obtenerDatos() {
         String rutaJSON = System.getProperty("user.dir") + "\\DBB.json";//RUTA DEL .JSON
@@ -49,6 +50,20 @@ public class Notificador {
     }
 
     private static void diasDiferencia(JsonArray datos) {
+       
+        String rutaJSON = System.getProperty("user.dir") + "\\DBB.json";//RUTA DEL .JSON
+
+        JsonParser parse = new JsonParser();
+        Object obj;
+        JsonObject json = null;
+        try {
+            obj = parse.parse(new FileReader(rutaJSON)); //LEO EL JSON
+            json = (JsonObject) obj;//JSON OBJECT
+            cierre = json.get("cierre").toString().replace("\"", "");
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(mainForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         meses.put("enero", 1);
         meses.put("febrero", 2);
         meses.put("marzo", 3);
@@ -61,16 +76,15 @@ public class Notificador {
         meses.put("octubre", 10);
         meses.put("noviembre", 11);
         meses.put("diciembre", 12);
-
-        LocalDateTime now = LocalDateTime.now();
-        int diaHoy = now.getDayOfMonth();
-        int mesActual = now.getMonthValue();
-        int anoActual = now.getYear();
-        int diferencia = 0;
+        String[] cierreArray = cierre.replace(" de", "").replace("\"", "").split(" ");
+        
+        int diaCierre = Integer.parseInt(cierreArray[0]);
+        int mesCierre = meses.get(cierreArray[1]);
+        int anoCierre = Integer.parseInt(cierreArray[2]);
+        
         boolean notificar = false;
 
         for (int i = 0; i < datos.size(); i++) {
-            diferencia = 0;
             JsonObject elemento = (JsonObject) datos.get(i);
             String[] c = elemento.get("FECHA").toString().replace(" de", "").replace("\"", "").split(" ");
 
@@ -79,70 +93,12 @@ public class Notificador {
             int mes = meses.get(c[1]);
             int ano = Integer.parseInt(c[2]);
 
-            //System.out.println("DIA: " + dia + "\n" + "MES: " + mes + "\n" + "ANO: " + ano);
-            if (anoActual < ano) {
-                diferencia += 365 * (ano - anoActual);
-                //System.out.println("Ano mayor " + diferencia);
-            } else if (anoActual != ano) {
-                diferencia = 0;
-                //System.out.println("Ano menor " + diferencia);
-                //System.out.println(diferencia);
-            }
-            if (mesActual < mes) {
-                diferencia += 30 * (mes - mesActual);
-                //System.out.println("mes mayor " + diferencia);
-            } else if (mesActual > mes) {
-                if (anoActual < ano) {
-                    diferencia += 30 * (mes - mesActual);
-                    //System.out.println("Mes - anoactual es mayor o igual");
-                } else if (anoActual > ano) {
-                    diferencia = 0;
-                    //System.out.println(diferencia);
-                }
-                //System.out.println("Mes menor " + diferencia);
-            }
-
-            if (diaHoy > dia) {
-                if (mesActual < mes) {
-                    diferencia += 1 * (dia - diaHoy);
-                } else {
-                    if (anoActual > ano) {
-                        diferencia = 0;
-                        //System.out.println(diferencia);
-                    } else {
-                        diferencia += 1 * (dia - diaHoy);
-                    }
-
-                }
-
-                //System.out.println("Dia mayor " + diferencia);
-            } else if (diaHoy < dia) {
-                if (mesActual == mes) {
-                    if (anoActual < ano) {
-                        diferencia += 1 * (dia - diaHoy);
-                    } else if (anoActual >= ano) {
-                        diferencia -= 1 * (dia - diaHoy);
-                    }
-
-                } else if (mesActual > mes) {
-                    diferencia += 1 * (dia - diaHoy);
-                    //System.out.println("XD?");
-                } else if (mesActual < mes) {
-                    diferencia += 1 * (dia - diaHoy);
-                }
-
-                //System.out.println("Dia menor " + diferencia);
-            }
-
-            //System.out.println("DIFERENCIA: " + diferencia);
-            //System.out.println(Math.abs(diferencia));
-            if (Math.abs(diferencia) <= 6) {
+            if (anoCierre >= ano && mesCierre >= mes && diaCierre >= dia) {
                 notificar = true;
             }
 
         }
 
-        System.out.println(Math.abs(diferencia));
         if (notificar == true) {
             hilo = new Thread(new Runnable() {
                 @Override
