@@ -179,8 +179,16 @@ public class mainForm extends javax.swing.JFrame {
                     int diferencia = 0;
 
                     System.out.println("DIA: " + dia + "\n" + "MES: " + mes + "\n" + "Ano: " + ano);
+                    if (anoCierre == ano && mesCierre == mes && diaCierre >= dia) {
+                        System.out.println("SE PUEDE AGREGAR!");
+                        Object[] fila = new Object[]{item.get("RESTAURANTES").toString().replace("\"", ""), item.get("HABITACION").toString().replace("\"", ""),
+                            item.get("LOCATA").toString().replace("\"", ""), item.get("OBSERVACIONES").toString().replace("\"", ""),
+                            item.get("HORA").toString().replace("\"", ""), item.get("FECHA").toString().replace("\"", ""),
+                            item.get("C.ADULTOS").toString().replace("\"", ""), item.get("C.NIÑOS").toString().replace("\"", "")};
 
-                    if (anoCierre >= ano && mesCierre >= mes && diaCierre >= dia) {
+                        modelo.addRow(fila);
+                    }
+                    if (anoCierre > ano) {
                         System.out.println("SE PUEDE AGREGAR!");
                         Object[] fila = new Object[]{item.get("RESTAURANTES").toString().replace("\"", ""), item.get("HABITACION").toString().replace("\"", ""),
                             item.get("LOCATA").toString().replace("\"", ""), item.get("OBSERVACIONES").toString().replace("\"", ""),
@@ -191,6 +199,30 @@ public class mainForm extends javax.swing.JFrame {
                     } else {
                         System.out.println("NO SE PUEDE AGREGAR AUN!");
                     }
+
+                    if (mesCierre > mes) {
+                        System.out.println("SE PUEDE AGREGAR!");
+                        Object[] fila = new Object[]{item.get("RESTAURANTES").toString().replace("\"", ""), item.get("HABITACION").toString().replace("\"", ""),
+                            item.get("LOCATA").toString().replace("\"", ""), item.get("OBSERVACIONES").toString().replace("\"", ""),
+                            item.get("HORA").toString().replace("\"", ""), item.get("FECHA").toString().replace("\"", ""),
+                            item.get("C.ADULTOS").toString().replace("\"", ""), item.get("C.NIÑOS").toString().replace("\"", "")};
+
+                        modelo.addRow(fila);
+                    } else {
+                        System.out.println("NO SE PUEDE AGREGAR AUN!");
+                    }
+
+                    /*if (anoCierre >= ano && mesCierre >= mes && diaCierre >= dia) {
+                        System.out.println("SE PUEDE AGREGAR!");
+                        Object[] fila = new Object[]{item.get("RESTAURANTES").toString().replace("\"", ""), item.get("HABITACION").toString().replace("\"", ""),
+                            item.get("LOCATA").toString().replace("\"", ""), item.get("OBSERVACIONES").toString().replace("\"", ""),
+                            item.get("HORA").toString().replace("\"", ""), item.get("FECHA").toString().replace("\"", ""),
+                            item.get("C.ADULTOS").toString().replace("\"", ""), item.get("C.NIÑOS").toString().replace("\"", "")};
+
+                        modelo.addRow(fila);
+                    } else {
+                        System.out.println("NO SE PUEDE AGREGAR AUN!");
+                    }*/
                 }
 
             } else {

@@ -50,7 +50,7 @@ public class Notificador {
     }
 
     private static void diasDiferencia(JsonArray datos) {
-       
+
         String rutaJSON = System.getProperty("user.dir") + "\\DBB.json";//RUTA DEL .JSON
 
         JsonParser parse = new JsonParser();
@@ -63,7 +63,7 @@ public class Notificador {
         } catch (FileNotFoundException ex) {
             Logger.getLogger(mainForm.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         meses.put("enero", 1);
         meses.put("febrero", 2);
         meses.put("marzo", 3);
@@ -77,11 +77,11 @@ public class Notificador {
         meses.put("noviembre", 11);
         meses.put("diciembre", 12);
         String[] cierreArray = cierre.replace(" de", "").replace("\"", "").split(" ");
-        
+
         int diaCierre = Integer.parseInt(cierreArray[0]);
         int mesCierre = meses.get(cierreArray[1]);
         int anoCierre = Integer.parseInt(cierreArray[2]);
-        
+
         boolean notificar = false;
 
         for (int i = 0; i < datos.size(); i++) {
@@ -93,8 +93,25 @@ public class Notificador {
             int mes = meses.get(c[1]);
             int ano = Integer.parseInt(c[2]);
 
-            if (anoCierre >= ano && mesCierre >= mes && diaCierre >= dia) {
+            if (anoCierre == ano && mesCierre == mes && diaCierre >= dia) {
                 notificar = true;
+            }
+            if (anoCierre > ano) {
+                notificar = true;
+            } else {
+                if (anoCierre != ano) {
+                    notificar = false;
+                }
+
+            }
+
+            if (mesCierre > mes) {
+                notificar = true;
+            } else {
+                if (mesCierre != mes) {
+                    notificar = false;
+                }
+
             }
 
         }
@@ -123,8 +140,7 @@ public class Notificador {
     private static void notificar() {
         SystemTray tray = SystemTray.getSystemTray();
 
-        for(int i = 0; i < tray.getTrayIcons().length; i++)
-        {
+        for (int i = 0; i < tray.getTrayIcons().length; i++) {
             tray.remove(tray.getTrayIcons()[i]);
         }
         Image image = Toolkit.getDefaultToolkit().createImage(resources.class.getResource("logo.png"));
@@ -135,9 +151,7 @@ public class Notificador {
         try {
             tray.add(trayIcon);
             trayIcon.displayMessage("REALIZAR RESERVA!", "Debes realizar una reserva para uno o más restaurantes", MessageType.INFO);
-            
-            
-            
+
             trayIcon.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
                     if (e.getClickCount() == 1) {
@@ -152,19 +166,16 @@ public class Notificador {
         }
 
     }
-    
-    public static void arrancar(JsonArray datos)
-    {
-        
-        if(hilo != null)
-        {
+
+    public static void arrancar(JsonArray datos) {
+
+        if (hilo != null) {
             hilo.stop();
             hilo = null;
             mainForm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             SystemTray tray = SystemTray.getSystemTray();
 
-            for(int i = 0; i < tray.getTrayIcons().length; i++)
-            {
+            for (int i = 0; i < tray.getTrayIcons().length; i++) {
                 tray.remove(tray.getTrayIcons()[i]);
             }
         }
@@ -173,6 +184,7 @@ public class Notificador {
 
     public static JsonArray datos;
     public static JFrame mainForm;
+
     public static void main(String[] args) {
 
         mainForm = new mainForm();
