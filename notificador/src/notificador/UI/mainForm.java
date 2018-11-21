@@ -2,6 +2,7 @@ package notificador.UI;
 
 import com.bulenkov.darcula.DarculaLaf;
 import com.github.lgooddatepicker.components.DatePicker;
+import com.github.lgooddatepicker.components.DatePickerSettings;
 import com.github.lgooddatepicker.components.DateTimePicker;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -24,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -130,6 +132,8 @@ public class mainForm extends javax.swing.JFrame {
         sortKeys.add(new RowSorter.SortKey(4, SortOrder.ASCENDING));
         sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
         sorter.setSortKeys(sortKeys);
+        
+        horaFecha.datePicker.setSettings(new DatePickerSettings(new Locale("es","ES")));
 
     }
 
@@ -857,7 +861,8 @@ public class mainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_agregarActionPerformed
 
     private void cierreMenuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cierreMenuMouseClicked
-        DatePicker fecha = new DatePicker();
+        
+        DatePicker fecha = new DatePicker(new DatePickerSettings(new Locale("es","ES")));
         Map<Integer, String> meses = new HashMap<>();
         meses.put(1, "enero");
         meses.put(2, "febrero");
