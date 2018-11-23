@@ -595,6 +595,7 @@ public class mainForm extends javax.swing.JFrame {
 
                 JTextField texto = new JTextField();
                 DateTimePicker fechaHora = new DateTimePicker();
+                fechaHora.datePicker.setSettings(new DatePickerSettings(new Locale("es","ES")));
                 JSpinner spinner = new JSpinner();
 
                 texto.setText((String) tabla.getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn()));
