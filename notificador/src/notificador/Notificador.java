@@ -93,6 +93,7 @@ public class Notificador {
             int mes = meses.get(c[1]);
             int ano = Integer.parseInt(c[2]);
 
+<<<<<<< HEAD
             if (anoCierre == ano && mesCierre == mes && diaCierre >= dia) {
                 notificar = true;
             }
@@ -101,22 +102,40 @@ public class Notificador {
             } else {
                 if (anoCierre != ano) {
                     notificar = false;
+=======
+            if (anoCierre == ano) {
+                //System.out.println("ano cierre es igual");
+                if (mesCierre > mes) {
+                    System.out.println("Mes cierre es mayor");
+                    notificar = true;
+                } else {
+                    if (mesCierre == mes) {
+                        if (diaCierre >= dia) {
+                            System.out.println("Dia es mayor");
+                            notificar = true;
+                        }
+                    }
+>>>>>>> parent of 36a002e... Revert "Bugs en fechas y ahora borra basandose en Key y no en numero de fila"
                 }
 
             }
 
             if (mesCierre > mes) {
                 notificar = true;
+<<<<<<< HEAD
             } else {
                 if (mesCierre != mes) {
                     notificar = false;
                 }
 
+=======
+>>>>>>> parent of 36a002e... Revert "Bugs en fechas y ahora borra basandose en Key y no en numero de fila"
             }
 
         }
 
         if (notificar == true) {
+            System.out.println("TRUE!");
             hilo = new Thread(new Runnable() {
                 @Override
                 public void run() {

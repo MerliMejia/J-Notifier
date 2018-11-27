@@ -181,7 +181,9 @@ public class mainForm extends javax.swing.JFrame {
                     int mes = meses.get(c[1]);
                     int ano = Integer.parseInt(c[2]);
                     int diferencia = 0;
+                    boolean notificar = false;
 
+<<<<<<< HEAD
                     System.out.println("DIA: " + dia + "\n" + "MES: " + mes + "\n" + "Ano: " + ano);
                     if (anoCierre == ano && mesCierre == mes && diaCierre >= dia) {
                         System.out.println("SE PUEDE AGREGAR!");
@@ -191,8 +193,25 @@ public class mainForm extends javax.swing.JFrame {
                             item.get("C.ADULTOS").toString().replace("\"", ""), item.get("C.NIÑOS").toString().replace("\"", "")};
 
                         modelo.addRow(fila);
+=======
+                    //System.out.println("DIA: " + dia + "\n" + "MES: " + mes + "\n" + "Ano: " + ano);
+                    if (anoCierre == ano) {
+                        //System.out.println("ano cierre es igual");
+                        if (mesCierre > mes) {
+                            //System.out.println("Mes cierre es mayor");
+                            notificar = true;
+                        } else {
+                            if (mesCierre == mes) {
+                                if (diaCierre >= dia) {
+                                    //System.out.println("Dia es mayor");
+                                    notificar = true;
+                                }
+                            }
+                        }
+>>>>>>> parent of 36a002e... Revert "Bugs en fechas y ahora borra basandose en Key y no en numero de fila"
                     }
                     if (anoCierre > ano) {
+<<<<<<< HEAD
                         System.out.println("SE PUEDE AGREGAR!");
                         Object[] fila = new Object[]{item.get("RESTAURANTES").toString().replace("\"", ""), item.get("HABITACION").toString().replace("\"", ""),
                             item.get("LOCATA").toString().replace("\"", ""), item.get("OBSERVACIONES").toString().replace("\"", ""),
@@ -206,14 +225,32 @@ public class mainForm extends javax.swing.JFrame {
 
                     if (mesCierre > mes) {
                         System.out.println("SE PUEDE AGREGAR!");
+=======
+                        //System.out.println("ano cierre es mayor");
+                        notificar = true;
+                    } else if (anoCierre < ano) {
+                        //System.out.println("ano cierre es menor");
+                        notificar = false;
+                    }
+
+                    if (notificar == true) {
+                        
+                        //System.out.println("SE PUEDE AGREGAR!");
+>>>>>>> parent of 36a002e... Revert "Bugs en fechas y ahora borra basandose en Key y no en numero de fila"
                         Object[] fila = new Object[]{item.get("RESTAURANTES").toString().replace("\"", ""), item.get("HABITACION").toString().replace("\"", ""),
                             item.get("LOCATA").toString().replace("\"", ""), item.get("OBSERVACIONES").toString().replace("\"", ""),
                             item.get("HORA").toString().replace("\"", ""), item.get("FECHA").toString().replace("\"", ""),
-                            item.get("C.ADULTOS").toString().replace("\"", ""), item.get("C.NIÑOS").toString().replace("\"", "")};
+                            item.get("C.ADULTOS").toString().replace("\"", ""), item.get("C.NIÑOS").toString().replace("\"", ""), item.get("KEY").toString().replace("\"", "")};
 
                         modelo.addRow(fila);
+<<<<<<< HEAD
                     } else {
                         System.out.println("NO SE PUEDE AGREGAR AUN!");
+=======
+                    }else
+                    {
+                        //System.out.println("NO SE PUEDE AGREGAR!");
+>>>>>>> parent of 36a002e... Revert "Bugs en fechas y ahora borra basandose en Key y no en numero de fila"
                     }
 
                     /*if (anoCierre >= ano && mesCierre >= mes && diaCierre >= dia) {
@@ -235,7 +272,7 @@ public class mainForm extends javax.swing.JFrame {
                     Object[] fila = new Object[]{item.get("RESTAURANTES").toString().replace("\"", ""), item.get("HABITACION").toString().replace("\"", ""),
                         item.get("LOCATA").toString().replace("\"", ""), item.get("OBSERVACIONES").toString().replace("\"", ""),
                         item.get("HORA").toString().replace("\"", ""), item.get("FECHA").toString().replace("\"", ""),
-                        item.get("C.ADULTOS").toString().replace("\"", ""), item.get("C.NIÑOS").toString().replace("\"", "")};
+                        item.get("C.ADULTOS").toString().replace("\"", ""), item.get("C.NIÑOS").toString().replace("\"", ""), item.get("KEY").toString().replace("\"", "")};
 
                     modelo.addRow(fila);
                 }
@@ -442,14 +479,14 @@ public class mainForm extends javax.swing.JFrame {
 
             },
             new String [] {
-                "RESTAURANTES", "HABITACION", "LOCATA", "OBSERVACIONES", "HORA", "FECHA", "C.ADULTOS", "C.NIÑOS"
+                "RESTAURANTES", "HABITACION", "LOCATA", "OBSERVACIONES", "HORA", "FECHA", "C.ADULTOS", "C.NIÑOS", "KEY"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -461,12 +498,18 @@ public class mainForm extends javax.swing.JFrame {
             }
         });
         tabla.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        tabla.getTableHeader().setReorderingAllowed(false);
         tabla.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tablaMouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(tabla);
+        if (tabla.getColumnModel().getColumnCount() > 0) {
+            tabla.getColumnModel().getColumn(8).setMinWidth(0);
+            tabla.getColumnModel().getColumn(8).setPreferredWidth(0);
+            tabla.getColumnModel().getColumn(8).setMaxWidth(0);
+        }
 
         editar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/notificador/resources/pencil.png"))); // NOI18N
         editar.setText("EDITAR");
@@ -680,13 +723,24 @@ public class mainForm extends javax.swing.JFrame {
                     JsonObject json = (JsonObject) obj;//JSON OBJECT
 
                     JsonArray array = (JsonArray) json.get("datos");//ARRAY DE DATOS
-
-                    JsonElement filaObtenida = array.get(tabla.getSelectedRow());
-                    JsonObject nuevo = (JsonObject) filaObtenida;
-
-                    objeto.add("KEY", nuevo.get("KEY"));
-
-                    array.set(tabla.getSelectedRow(), objeto);
+                    
+                    String keySelected = (String) tabla.getValueAt(tabla.getSelectedRow(), 8);
+                    int index = 0;
+                    
+                    for(int i = 0; i < array.size(); i++)
+                    {
+                        JsonObject nuevo = (JsonObject) array.get(i);
+                        if(nuevo.get("KEY").toString().replace("\"", "").equals(keySelected))
+                        {
+                            System.out.println("SIII!!!");
+                            objeto.add("KEY", nuevo.get("KEY"));
+                            index = i;
+                            break;
+                        }
+                        System.out.println(nuevo.get("KEY").toString().replace("\"", "") + "  " + keySelected);
+                    }
+                    
+                    array.set(index, objeto);
                     json.add("datos", array);
 
                     //SOBRE ESCRIBO EL NUEVO .JSON
@@ -735,9 +789,25 @@ public class mainForm extends javax.swing.JFrame {
                 try {
                     Object obj = parse.parse(new FileReader(rutaJSON));//LEO EL JSON
                     JsonObject json = (JsonObject) obj;//JSON OBJECT
-
                     JsonArray array = (JsonArray) json.get("datos");//ARRAY DE DATOS
-                    array.remove(tabla.getSelectedRow());
+                    
+                    String keySelected = (String) tabla.getValueAt(tabla.getSelectedRow(), 8);
+                    int index = 0;
+                    
+                    for(int i = 0; i < array.size(); i++)
+                    {
+                        JsonObject nuevo = (JsonObject) array.get(i);
+                        if(nuevo.get("KEY").toString().replace("\"", "").equals(keySelected))
+                        {
+                            System.out.println("SIII!!!");
+                            index = i;
+                            break;
+                        }
+                        System.out.println(nuevo.get("KEY").toString().replace("\"", "") + "  " + keySelected);
+                    }
+
+                    
+                    array.remove(index);
 
                     json.add("datos", array);
 
