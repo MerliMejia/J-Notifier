@@ -93,27 +93,25 @@ public class Notificador {
             int mes = meses.get(c[1]);
             int ano = Integer.parseInt(c[2]);
 
-            if (anoCierre == ano) {
-                System.out.println("ano cierre es igual");
-                if (mesCierre > mes) {
-                    System.out.println("Mes cierre es mayor");
-                    notificar = true;
-                } else {
-                    if (mesCierre == mes) {
-                        if (diaCierre >= dia) {
-                            System.out.println("Dia es mayor");
-                            notificar = true;
-                        }
-                    }
+            if (anoCierre == ano && mesCierre == mes && diaCierre >= dia) {
+                notificar = true;
+            }
+            if (anoCierre > ano) {
+                notificar = true;
+            } else {
+                if (anoCierre != ano) {
+                    notificar = false;
                 }
+
             }
 
-            if (anoCierre > ano) {
-                System.out.println("ano cierre es mayor");
+            if (mesCierre > mes) {
                 notificar = true;
-            } else if (anoCierre < ano) {
-                System.out.println("ano cierre es menor");
-                notificar = false;
+            } else {
+                if (mesCierre != mes) {
+                    notificar = false;
+                }
+
             }
 
         }

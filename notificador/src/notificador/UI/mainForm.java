@@ -124,7 +124,16 @@ public class mainForm extends javax.swing.JFrame {
                 traerDatosTabla();
             }
         });
-        horaFecha.datePicker.setSettings(new DatePickerSettings(new Locale("es", "ES")));
+
+        TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(tabla.getModel());
+        tabla.setRowSorter(sorter);
+
+        List<RowSorter.SortKey> sortKeys = new ArrayList<>(25);
+        sortKeys.add(new RowSorter.SortKey(4, SortOrder.ASCENDING));
+        sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
+        sorter.setSortKeys(sortKeys);
+        
+        horaFecha.datePicker.setSettings(new DatePickerSettings(new Locale("es","ES")));
 
     }
 
@@ -174,36 +183,16 @@ public class mainForm extends javax.swing.JFrame {
                     int diferencia = 0;
 
                     System.out.println("DIA: " + dia + "\n" + "MES: " + mes + "\n" + "Ano: " + ano);
+                    if (anoCierre == ano && mesCierre == mes && diaCierre >= dia) {
+                        System.out.println("SE PUEDE AGREGAR!");
+                        Object[] fila = new Object[]{item.get("RESTAURANTES").toString().replace("\"", ""), item.get("HABITACION").toString().replace("\"", ""),
+                            item.get("LOCATA").toString().replace("\"", ""), item.get("OBSERVACIONES").toString().replace("\"", ""),
+                            item.get("HORA").toString().replace("\"", ""), item.get("FECHA").toString().replace("\"", ""),
+                            item.get("C.ADULTOS").toString().replace("\"", ""), item.get("C.NIÑOS").toString().replace("\"", "")};
 
-                    if (anoCierre == ano) {
-                        System.out.println("ano cierre es igual");
-                        if (mesCierre > mes) {
-                            System.out.println("Mes cierre es mayor");
-                            System.out.println("SE PUEDE AGREGAR!");
-                            Object[] fila = new Object[]{item.get("RESTAURANTES").toString().replace("\"", ""), item.get("HABITACION").toString().replace("\"", ""),
-                                item.get("LOCATA").toString().replace("\"", ""), item.get("OBSERVACIONES").toString().replace("\"", ""),
-                                item.get("HORA").toString().replace("\"", ""), item.get("FECHA").toString().replace("\"", ""),
-                                item.get("C.ADULTOS").toString().replace("\"", ""), item.get("C.NIÑOS").toString().replace("\"", "")};
-
-                            modelo.addRow(fila);
-                        } else {
-                            if (mesCierre == mes) {
-                                if (diaCierre >= dia) {
-                                    System.out.println("Dia es mayor");
-                                    System.out.println("SE PUEDE AGREGAR!");
-                                    Object[] fila = new Object[]{item.get("RESTAURANTES").toString().replace("\"", ""), item.get("HABITACION").toString().replace("\"", ""),
-                                        item.get("LOCATA").toString().replace("\"", ""), item.get("OBSERVACIONES").toString().replace("\"", ""),
-                                        item.get("HORA").toString().replace("\"", ""), item.get("FECHA").toString().replace("\"", ""),
-                                        item.get("C.ADULTOS").toString().replace("\"", ""), item.get("C.NIÑOS").toString().replace("\"", "")};
-
-                                    modelo.addRow(fila);
-                                }
-                            }
-                        }
+                        modelo.addRow(fila);
                     }
-
                     if (anoCierre > ano) {
-                        System.out.println("ano cierre es mayor");
                         System.out.println("SE PUEDE AGREGAR!");
                         Object[] fila = new Object[]{item.get("RESTAURANTES").toString().replace("\"", ""), item.get("HABITACION").toString().replace("\"", ""),
                             item.get("LOCATA").toString().replace("\"", ""), item.get("OBSERVACIONES").toString().replace("\"", ""),
@@ -211,16 +200,22 @@ public class mainForm extends javax.swing.JFrame {
                             item.get("C.ADULTOS").toString().replace("\"", ""), item.get("C.NIÑOS").toString().replace("\"", "")};
 
                         modelo.addRow(fila);
-                    } else if (anoCierre < ano) {
-                        System.out.println("ano cierre es menor");
-                        System.out.println("SE PUEDE AGREGAR!");
-                        Object[] fila = new Object[]{item.get("RESTAURANTES").toString().replace("\"", ""), item.get("HABITACION").toString().replace("\"", ""),
-                            item.get("LOCATA").toString().replace("\"", ""), item.get("OBSERVACIONES").toString().replace("\"", ""),
-                            item.get("HORA").toString().replace("\"", ""), item.get("FECHA").toString().replace("\"", ""),
-                            item.get("C.ADULTOS").toString().replace("\"", ""), item.get("C.NIÑOS").toString().replace("\"", "")};
-
-                        modelo.addRow(fila);
+                    } else {
+                        System.out.println("NO SE PUEDE AGREGAR AUN!");
                     }
+
+                    if (mesCierre > mes) {
+                        System.out.println("SE PUEDE AGREGAR!");
+                        Object[] fila = new Object[]{item.get("RESTAURANTES").toString().replace("\"", ""), item.get("HABITACION").toString().replace("\"", ""),
+                            item.get("LOCATA").toString().replace("\"", ""), item.get("OBSERVACIONES").toString().replace("\"", ""),
+                            item.get("HORA").toString().replace("\"", ""), item.get("FECHA").toString().replace("\"", ""),
+                            item.get("C.ADULTOS").toString().replace("\"", ""), item.get("C.NIÑOS").toString().replace("\"", "")};
+
+                        modelo.addRow(fila);
+                    } else {
+                        System.out.println("NO SE PUEDE AGREGAR AUN!");
+                    }
+
                     /*if (anoCierre >= ano && mesCierre >= mes && diaCierre >= dia) {
                         System.out.println("SE PUEDE AGREGAR!");
                         Object[] fila = new Object[]{item.get("RESTAURANTES").toString().replace("\"", ""), item.get("HABITACION").toString().replace("\"", ""),
@@ -600,7 +595,7 @@ public class mainForm extends javax.swing.JFrame {
 
                 JTextField texto = new JTextField();
                 DateTimePicker fechaHora = new DateTimePicker();
-                fechaHora.datePicker.setSettings(new DatePickerSettings(new Locale("es", "ES")));
+                fechaHora.datePicker.setSettings(new DatePickerSettings(new Locale("es","ES")));
                 JSpinner spinner = new JSpinner();
 
                 texto.setText((String) tabla.getValueAt(tabla.getSelectedRow(), tabla.getSelectedColumn()));
@@ -867,8 +862,8 @@ public class mainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_agregarActionPerformed
 
     private void cierreMenuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cierreMenuMouseClicked
-
-        DatePicker fecha = new DatePicker(new DatePickerSettings(new Locale("es", "ES")));
+        
+        DatePicker fecha = new DatePicker(new DatePickerSettings(new Locale("es","ES")));
         Map<Integer, String> meses = new HashMap<>();
         meses.put(1, "enero");
         meses.put(2, "febrero");
