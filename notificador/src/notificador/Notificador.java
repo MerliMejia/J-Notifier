@@ -94,7 +94,7 @@ public class Notificador {
             int ano = Integer.parseInt(c[2]);
 
             if (anoCierre == ano) {
-                System.out.println("ano cierre es igual");
+                //System.out.println("ano cierre es igual");
                 if (mesCierre > mes) {
                     System.out.println("Mes cierre es mayor");
                     notificar = true;
@@ -111,14 +111,12 @@ public class Notificador {
             if (anoCierre > ano) {
                 System.out.println("ano cierre es mayor");
                 notificar = true;
-            } else if (anoCierre < ano) {
-                System.out.println("ano cierre es menor");
-                notificar = false;
             }
 
         }
 
         if (notificar == true) {
+            System.out.println("TRUE!");
             hilo = new Thread(new Runnable() {
                 @Override
                 public void run() {
