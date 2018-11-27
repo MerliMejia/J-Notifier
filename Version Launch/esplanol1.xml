@@ -2,8 +2,8 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>D:\Proyectos Personales\JAVA\J-Notificador\J-Notifier\Version Launch\notificador.jar</jar>
-  <outfile>D:\Proyectos Personales\JAVA\J-Notificador\J-Notifier\Version Launch\notificador.exe</outfile>
+  <jar>D:\Proyectos Personales\JAVA\J-Notificador\Version Launch\notificador.jar</jar>
+  <outfile>D:\Proyectos Personales\JAVA\J-Notificador\Version Launch\notificador.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>
@@ -13,7 +13,7 @@
   <stayAlive>false</stayAlive>
   <restartOnCrash>false</restartOnCrash>
   <manifest></manifest>
-  <icon>D:\Proyectos Personales\JAVA\J-Notificador\J-Notifier\Version Launch\logo_1SS_icon.ico</icon>
+  <icon>D:\Proyectos Personales\JAVA\J-Notificador\Version Launch\logo_1SS_icon.ico</icon>
   <jre>
     <path>jre8</path>
     <bundledJre64Bit>false</bundledJre64Bit>

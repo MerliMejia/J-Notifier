@@ -395,7 +395,7 @@
                 <Component class="javax.swing.JTable" name="tabla">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="8" rowCount="0">
+                      <Table columnCount="9" rowCount="0">
                         <Column editable="false" title="RESTAURANTES" type="java.lang.String"/>
                         <Column editable="false" title="HABITACION" type="java.lang.String"/>
                         <Column editable="false" title="LOCATA" type="java.lang.String"/>
@@ -403,7 +403,8 @@
                         <Column editable="false" title="HORA" type="java.lang.String"/>
                         <Column editable="false" title="FECHA" type="java.lang.String"/>
                         <Column editable="false" title="C.ADULTOS" type="java.lang.String"/>
-                        <Column editable="false" title="C.NI&#xd1;OS" type="java.lang.String"/>
+                        <Column editable="false" title="C.NINOS" type="java.lang.String"/>
+                        <Column editable="false" title="KEY" type="java.lang.String"/>
                       </Table>
                     </Property>
                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -448,13 +449,18 @@
                           <Editor/>
                           <Renderer/>
                         </Column>
+                        <Column maxWidth="0" minWidth="0" prefWidth="0" resizable="true">
+                          <Title noResource="true"/>
+                          <Editor/>
+                          <Renderer/>
+                        </Column>
                       </TableColumnModel>
                     </Property>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Dialog" size="14" style="0"/>
                     </Property>
                     <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
-                      <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
+                      <TableHeader reorderingAllowed="false" resizingAllowed="true"/>
                     </Property>
                   </Properties>
                   <Events>
